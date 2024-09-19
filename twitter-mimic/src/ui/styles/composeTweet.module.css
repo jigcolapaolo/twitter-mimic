@@ -1,0 +1,62 @@
+.section {
+    display: flex;
+    align-items: flex-start;
+}
+
+.avatarSection {
+    padding-top: 20px;
+    padding-left: 10px;
+}
+
+.div {
+    padding: 15px;
+}
+
+.form {
+    padding: 10px;
+}
+
+.textarea {
+    width: 100%;
+    font-size: 21px;
+    border-radius: 10px;
+    padding: 15px;
+    resize: none;
+    border: 0;
+    outline: 0;
+    color: var(--container-color);
+    min-height: 200px;
+}
+
+.imgSection {
+    position: relative;
+}
+
+.imgButton {
+    background: rgba(0, 0, 0, 0.3);
+    border: 0;
+    border-radius: 999px;
+    color: #fff;
+    width: 30px;
+    height: 30px;
+    top: 15px;
+    position: absolute;
+    right: 15px;
+    font-family: system-ui;
+}
+
+.imgButton:hover {
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.img {
+    height: auto;
+    width: 100%;
+    border-radius: 10px;
+}
+
+.button[disabled] {
+    pointer-events: none;
+    opacity: 0.5;
+    user-select: none;
+}

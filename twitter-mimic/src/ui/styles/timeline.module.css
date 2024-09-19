@@ -1,0 +1,17 @@
+.title {
+  color: var(--primary-color);
+  font-weight: 700;
+  font-size: 36px;
+  text-align: center;
+}
+
+.link {
+    color: var(--secondary-color);
+    font-size: 18px;
+    text-align: center;
+}
+
+.span {
+    color: var(--secondary-color);
+    margin-left: 0.4rem;
+}

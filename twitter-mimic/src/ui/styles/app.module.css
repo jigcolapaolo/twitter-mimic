@@ -1,0 +1,66 @@
+.h1 {
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--secondary-color);
+  margin-bottom: 16px;
+}
+
+.h2 {
+  color: var(--primary-color);
+  font-size: 21px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.div {
+  margin-top: 30px;
+  height: 100px;
+}
+
+.section {
+  display: grid;
+  place-items: center;
+  place-content: center;
+  height: 100%;
+}
+
+.button {
+  border: 0;
+  color: #fff;
+  border-radius: 9999px;
+  font-size: 16px;
+  font-weight: 700;
+  padding: 8px 24px;
+  cursor: pointer;
+  opacity: 1;
+  transition: opacity .1s ease-in-out;
+  border: 2px solid #0000;
+  background:
+      linear-gradient(black, #222) padding-box;
+}
+
+.button svg {
+  margin-right: 10px;
+}
+
+.button:hover {
+  opacity: .8;
+}
+
+/* Avatar.tsx */
+.avatar {
+  border-radius: 9999px;
+  height: 49px;
+  width: 49px;
+}
+
+.avatar + strong {
+  margin-left: 8px;
+  color: var(--secondary-color);
+}
+
+.container {
+  display: flex;
+  align-items: center;
+}
+
