@@ -1,62 +1,85 @@
 .section {
-    display: flex;
-    align-items: flex-start;
+  display: flex;
+  align-items: flex-start;
+}
+
+.svgButton {
+  margin: 0.4rem;
+  width: fit-content;
+  border-radius: 9999px;
+}
+
+.svg {
+  stroke: var(--primary-color);
+  border-radius: 9999px;
+}
+
+.svg:hover {
+  stroke: var(--primary-color-alt);
+  background: radial-gradient(#00336615 15%, transparent 16%);
+  background-size: 280px 270px;
+  background-position: center;
 }
 
 .avatarSection {
-    padding-top: 20px;
-    padding-left: 10px;
+  padding-top: 10px;
+  padding-left: 15px;
+  width: 15%;
 }
 
 .div {
-    padding: 15px;
+  display: flex;
+  justify-content: flex-end;
+  padding: 15px;
+  font-family: system-ui;
 }
 
 .form {
-    padding: 10px;
+  padding: 10px;
+  width: 85%;
 }
 
 .textarea {
-    width: 100%;
-    font-size: 21px;
-    border-radius: 10px;
-    padding: 15px;
-    resize: none;
-    border: 0;
-    outline: 0;
-    color: var(--container-color);
-    min-height: 200px;
+  width: 100%;
+  font-size: 21px;
+  border-radius: 10px;
+  resize: none;
+  border: 0;
+  outline: 0;
+  color: var(--container-color);
+  min-height: 200px;
+  mask-image: linear-gradient(black 90%, transparent);
 }
 
 .imgSection {
-    position: relative;
+  position: relative;
 }
 
 .imgButton {
-    background: rgba(0, 0, 0, 0.3);
-    border: 0;
-    border-radius: 999px;
-    color: #fff;
-    width: 30px;
-    height: 30px;
-    top: 15px;
-    position: absolute;
-    right: 15px;
-    font-family: system-ui;
+  background: rgba(0, 0, 0, 0.3);
+  border: 0;
+  border-radius: 999px;
+  color: #fff;
+  width: 30px;
+  height: 30px;
+  top: 15px;
+  position: absolute;
+  right: 15px;
+  font-family: system-ui;
 }
 
 .imgButton:hover {
-    background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.5);
 }
 
 .img {
-    height: auto;
-    width: 100%;
-    border-radius: 10px;
+  height: auto;
+  width: 100%;
+  border-radius: 10px;
 }
 
 .button[disabled] {
-    pointer-events: none;
-    opacity: 0.5;
-    user-select: none;
+  pointer-events: none;
+  opacity: 0.5;
+  user-select: none;
 }

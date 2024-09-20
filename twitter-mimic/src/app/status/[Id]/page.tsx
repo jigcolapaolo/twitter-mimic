@@ -4,6 +4,9 @@ import Link from "next/link";
 import { fetchLatestTweets } from "../../../../firebase/client";
 import { firestore } from "../../../../firebase/admin";
 import { Timeline } from "@/lib/definitions";
+import ArrowLeft from "@/ui/icons/ArrowLeft";
+import composeStyles from "@/ui/styles/composeTweet.module.css";
+import { SadEmojiIcon } from "@/ui/icons/Emojis";
 
 interface TweetPageProps {
   Id: string;
@@ -22,7 +25,6 @@ export default async function TweetPage({
   params: TweetPageProps;
 }) {
   const { Id } = params;
-
 
   try {
     const docRef = firestore.collection("tweets").doc(Id);
@@ -45,32 +47,38 @@ export default async function TweetPage({
       likesCount: data?.likesCount,
       sharedCount: data?.sharedCount,
       createdAt: normalizedCreatedAt,
-    }
+    };
 
     return (
-      <div>
-        <Tweet
-          id={props.Id}
-          content={props.content}
-          img={props.img}
-          avatar={props.avatar}
-          userName={props.userName}
-          userId={props.userId}
-          createdAt={props.createdAt}
-          likesCount={props.likesCount}
-          sharedCount={props.sharedCount}
-        />
-      </div>
+      <>
+        <Link href={"/home"} className={composeStyles.svgButton}>
+          <ArrowLeft width={35} height={35} className={composeStyles.svg} />
+        </Link>
+        <div>
+          <Tweet
+            id={props.Id}
+            content={props.content}
+            img={props.img}
+            avatar={props.avatar}
+            userName={props.userName}
+            userId={props.userId}
+            createdAt={props.createdAt}
+            likesCount={props.likesCount}
+            sharedCount={props.sharedCount}
+          />
+        </div>
+      </>
     );
   } catch (error) {
     return (
-      <section className="flex flex-col items-center h-full justify-evenly">
-        <p className="text-3xl font-bold text-center text-blue-500">
-          Tweet no encontrado
+      <section className="flex flex-col items-center justify-evenly h-full ">
+        <p className="flex flex-col items-center justify-center text-3xl font-bold text-center text-blue-500">
+          Tweet no encontrado <SadEmojiIcon width={50} height={50} />
         </p>
-        <Button>
-          <Link href="/home">Volver a Home</Link>
-        </Button>
+
+        <Link href="/home">
+          <Button>Volver a Home</Button>
+        </Link>
       </section>
     );
   }

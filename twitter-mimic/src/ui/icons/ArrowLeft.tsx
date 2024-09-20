@@ -5,6 +5,7 @@ export default function ArrowLeft(props: SVGProps<SVGSVGElement>) {
     <g
       fill="none"
       fillRule="evenodd"
+      stroke={props.stroke}
       strokeLinecap="round"
       strokeLinejoin="round"
     >

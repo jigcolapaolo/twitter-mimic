@@ -15,6 +15,8 @@ import { useRouter } from "next/navigation";
 import { getDownloadURL, UploadTask } from "firebase/storage";
 import Image from "next/image";
 import { Avatar } from "@/ui/components/Avatar";
+import ArrowLeft from "@/ui/icons/ArrowLeft";
+import Link from "next/link";
 
 const COMPOSE_STATES = {
   USER_NOT_KNOWN: 0,
@@ -103,11 +105,12 @@ export default function ComposeTweet() {
 
   return (
     <>
+      <Link href={"/home"} className={styles.svgButton}>
+        <ArrowLeft width={35} height={35} className={styles.svg} />
+      </Link>
       <section className={styles.section}>
         <figure className={styles.avatarSection}>
-          {user && (
-            <Avatar src={user.avatar} alt={user.displayName} />
-          )}
+          {user && <Avatar src={user.avatar} alt={user.displayName} />}
         </figure>
         <form className={styles.form} onSubmit={handleSubmit}>
           <textarea
