@@ -11,6 +11,7 @@ import { Timeline } from "@/lib/definitions";
 import { LikeIcon } from "../icons/Like";
 import RetweetIcon from "../icons/Retweet";
 import ChainIcon from "../icons/LinkIcon";
+import { toast } from "sonner";
 
 export default function Tweet({
   avatar,
@@ -30,6 +31,17 @@ export default function Tweet({
     e.preventDefault();
     router.push(`/status/${id}`);
   };
+
+  const handleCopyTweetLink: MouseEventHandler<HTMLButtonElement> = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const baseUrl = window.location.origin
+    navigator.clipboard.writeText(`${baseUrl}/status/${id}`);
+    const toastId = toast.info("Link copiado");
+    setTimeout(() => {
+      toast.dismiss(toastId);
+    }, 2000);
+  }
 
   return (
     <article key={id} className={styles.article} onClick={handleArticleClick}>
@@ -63,7 +75,7 @@ export default function Tweet({
             <RetweetIcon />
             <span>{sharedCount}</span>
           </button>
-          <button>
+          <button onClick={handleCopyTweetLink}>
             <ChainIcon />
           </button>
         </footer>

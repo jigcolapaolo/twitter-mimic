@@ -28,8 +28,8 @@ export default function RootLayout({
       <body className={`${lusitana.className} antialiased`}>
         <div className="divApp">
           <main className="mainApp">{children}</main>
-          <Toaster richColors />
         </div>
+        <Toaster theme="dark" position="top-center" richColors />
       </body>
     </html>
   );
