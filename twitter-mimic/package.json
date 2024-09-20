@@ -11,7 +11,7 @@
   "dependencies": {
     "firebase": "^10.13.1",
     "firebase-admin": "^12.5.0",
-    "next": "14.2.8",
+    "next": "^14.2.12",
     "react": "^18",
     "react-content-loader": "^7.0.2",
     "react-dom": "^18",

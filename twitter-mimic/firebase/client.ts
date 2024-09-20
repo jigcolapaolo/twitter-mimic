@@ -1,6 +1,6 @@
 import { User } from "@/lib/definitions";
 import { initializeApp } from "firebase/app";
-import { getAuth, signInWithPopup, GithubAuthProvider } from "firebase/auth";
+import { getAuth, signInWithPopup, GithubAuthProvider, GoogleAuthProvider } from "firebase/auth";
 import {
   addDoc,
   collection,
@@ -34,6 +34,7 @@ const mapUserFromFirebaseAuthToUser = (user: any): User => {
 
 export const onAuthStateChanged = (onChange: any) => {
   return getAuth(app).onAuthStateChanged((user) => {
+    console.log(user)
     if (user) {
       const normalizedUser = mapUserFromFirebaseAuthToUser(user);
       onChange(normalizedUser);
@@ -68,6 +69,20 @@ export const loginWithGitHub = async (): Promise<void> => {
     await signInWithPopup(auth, githubProvider);
   } catch (error) {
     console.log(error);
+  }
+};
+
+export const loginWithGoogle = async (): Promise<void> => {
+  const auth = getAuth(app);
+  
+  const googleProvider = new GoogleAuthProvider();
+  googleProvider.addScope("email")
+
+  try {
+    console.log(googleProvider)
+    await signInWithPopup(auth, googleProvider);
+  } catch (error) {
+    console.log("Error Google" + error);
   }
 };
 
