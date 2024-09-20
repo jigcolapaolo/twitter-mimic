@@ -2,7 +2,7 @@
 
 import styles from "@/ui/styles/home.module.css";
 import { useState, useEffect } from "react";
-import { Timeline } from "@/lib/definitions"
+import { Timeline } from "@/lib/definitions";
 import Tweet from "@/ui/components/Tweet";
 import Link from "next/link";
 import useUser from "../../../hooks/useUser";
@@ -10,7 +10,8 @@ import CreateIcon from "@/ui/icons/Create";
 import HomeIcon from "@/ui/icons/Home";
 import SearchIcon from "@/ui/icons/SearchIcon";
 import { SyncLoader } from "react-spinners";
-import { listenLatestTweets } from "../../../firebase/client";
+import { listenLatestTweets, userSignOut } from "../../../firebase/client";
+import SignOutIcon from "@/ui/icons/SignOutIcon";
 
 export default function HomePage() {
   const [timeline, setTimeline] = useState<Timeline[]>([]);
@@ -30,15 +31,20 @@ export default function HomePage() {
     const unsubscribe: any = listenLatestTweets((newTweets: any) => {
       // console.log(newTweets);
       setTimeline(newTweets);
-    })
+    });
 
-    return () => unsubscribe()
-    
+    return () => unsubscribe();
+
     // user &&
     //   fetchLatestTweets().then((data: any) => {
     //     setTimeline(data);
     //   });
   }, [user]);
+
+  const handleSignOut = () => {
+    if (!user) return;
+    userSignOut();
+  };
 
   return (
     <>
@@ -46,6 +52,13 @@ export default function HomePage() {
         <Link href={"/"}>
           <p>Inicio</p>
         </Link>
+        <SignOutIcon
+          onClick={handleSignOut}
+          width={32}
+          height={32}
+          stroke="#0099ff"
+          fill="white"
+        />
       </header>
 
       <section className={styles.section}>

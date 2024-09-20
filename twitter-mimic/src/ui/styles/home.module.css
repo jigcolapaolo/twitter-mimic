@@ -1,33 +1,51 @@
 .header {
-    display: flex;
-    align-items: center;
-    border-bottom: 1px solid #eee;
-    height: 49px;
-    position: sticky;
-    top: 0;
-    width: 100%;
-    background: #ffffffaa;
-    backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #eee;
+  height: 49px;
+  position: sticky;
+  top: 0;
+  width: 100%;
+  background: #ffffffaa;
+  backdrop-filter: blur(5px);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 15px;
 }
 
 .header p {
-    font-size: 21px;
-    padding-left: 15px;
-    font-weight: 700;
-    color: var(--primary-color);
+  font-size: 21px;
+  font-weight: 700;
+  color: var(--primary-color);
+}
+
+.header svg {
+  cursor: pointer;
+  border-radius: 50%;
+}
+
+.header svg:hover {
+  background: radial-gradient(#00336615 15%, transparent 16%);
+  background-size: 180px 180px;
+  background-position: center;
+}
+
+.header svg:hover g {
+  stroke: var(--primary-color-alt);
 }
 
 .section {
-    color: var(--primary-color);
-    flex: 1;
-    overflow-y: auto;
+  color: var(--primary-color);
+  flex: 1;
+  overflow-y: auto;
 }
 
 /* Tweet */
 .article {
-    display: flex;
-    padding: 10px 15px;
-    border-bottom: 1px solid #eee;
+  display: flex;
+  padding: 10px 15px;
+  border-bottom: 1px solid #eee;
 }
 
 .article:hover {
@@ -36,50 +54,49 @@
 }
 
 .avatarDiv {
-    flex: 0 0 50px;
-    margin-right: 15px;
+  flex: 0 0 50px;
+  margin-right: 15px;
 }
 
 .p {
-    line-height: 1.3125;
-    margin: 0;
-    color: var(--secondary-color);
+  line-height: 1.3125;
+  margin: 0;
+  color: var(--secondary-color);
 }
 
 .link:hover {
-    text-decoration: underline;
-    color: gray;
+  text-decoration: underline;
+  color: gray;
 }
 
 .img {
-    height: auto;
-    width: 100%;
-    border-radius: 10px;
-    margin: 10px;
+  height: auto;
+  width: 100%;
+  border-radius: 10px;
+  margin: 10px;
 }
 
 .nav {
-    bottom: 0;
-    border-top: 1px solid #eee;
-    height: 49px;
-    position: sticky;
-    width: 100%;
-    background: #fff;
-    display: flex;
-    justify-content: space-around;
+  bottom: 0;
+  border-top: 1px solid #eee;
+  height: 49px;
+  position: sticky;
+  width: 100%;
+  background: #fff;
+  display: flex;
+  justify-content: space-around;
 }
 
 .nav a {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
-    width: 2.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 2.5rem;
 }
 
 .nav a:hover {
-  background: radial-gradient(#00336615 15%,
-    transparent 16%);
+  background: radial-gradient(#00336615 15%, transparent 16%);
   background-size: 180px 180px;
   background-position: center;
 }

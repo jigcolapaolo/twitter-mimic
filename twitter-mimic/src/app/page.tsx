@@ -35,7 +35,7 @@ export default function Home() {
         />
         <h1 className={`${styles.h1} truncate antialiase`}>Twitter Mimic</h1>
         <h2 className={styles.h2}>
-          Talk about development with developers 👨‍💻👩‍💻
+          Conéctate y comparte lo que piensas 💡
         </h2>
         <div className={styles.div}>
           {user === USER_STATES.NOT_KNOWN && <SyncLoader color="#78b2f7" />}

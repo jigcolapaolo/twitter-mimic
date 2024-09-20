@@ -86,6 +86,11 @@ export const loginWithGoogle = async (): Promise<void> => {
   }
 };
 
+export const userSignOut = () => {
+  const auth = getAuth(app);
+  return auth.signOut();
+}
+
 export const addTweet = async ({
   avatar,
   content,
