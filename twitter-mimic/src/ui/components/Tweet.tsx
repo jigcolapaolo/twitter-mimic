@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import Image from "next/image";
 import useTimeAgo from "../../../hooks/useTimeAgo";
@@ -8,6 +8,9 @@ import Link from "next/link";
 import { MouseEventHandler } from "react";
 import { useRouter } from "next/navigation";
 import { Timeline } from "@/lib/definitions";
+import { LikeIcon } from "../icons/Like";
+import RetweetIcon from "../icons/Retweet";
+import ChainIcon from "../icons/LinkIcon";
 
 export default function Tweet({
   avatar,
@@ -17,16 +20,16 @@ export default function Tweet({
   img,
   // userId,
   createdAt,
-  // likesCount,
-  // sharedCount,
+  likesCount,
+  sharedCount,
 }: Timeline) {
   const timeago = useTimeAgo(createdAt);
-  const router = useRouter()
+  const router = useRouter();
 
   const handleArticleClick: MouseEventHandler<HTMLElement> = (e) => {
-    e.preventDefault()
-    router.push(`/status/${id}`)
-  }
+    e.preventDefault();
+    router.push(`/status/${id}`);
+  };
 
   return (
     <article key={id} className={styles.article} onClick={handleArticleClick}>
@@ -51,6 +54,19 @@ export default function Tweet({
             alt="Tweet Image"
           />
         )}
+        <footer className={styles.footer}>
+          <button>
+            <LikeIcon />
+            <span>{likesCount}</span>
+          </button>
+          <button>
+            <RetweetIcon />
+            <span>{sharedCount}</span>
+          </button>
+          <button>
+            <ChainIcon />
+          </button>
+        </footer>
       </section>
     </article>
   );
