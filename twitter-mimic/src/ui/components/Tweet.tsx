@@ -12,6 +12,7 @@ import { LikeIcon } from "../icons/Like";
 import RetweetIcon from "../icons/Retweet";
 import ChainIcon from "../icons/LinkIcon";
 import { toast } from "sonner";
+import CommentIcon from "../icons/CommentIcon";
 
 export default function Tweet({
   avatar,
@@ -70,6 +71,10 @@ export default function Tweet({
           <button>
             <LikeIcon />
             <span>{likesCount}</span>
+          </button>
+          <button>
+            <CommentIcon />
+            <span>0</span>
           </button>
           <button>
             <RetweetIcon />
