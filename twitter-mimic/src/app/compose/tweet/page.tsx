@@ -22,6 +22,8 @@ const COMPOSE_STATES = {
   ERROR: -1,
 };
 
+const MAX_CHARS = 280;
+
 export default function ComposeTweet() {
   const { push } = useRouter();
   const [message, setMessage] = useState<string>();
@@ -40,7 +42,8 @@ export default function ComposeTweet() {
 
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     const { value } = e.target;
-    setMessage(value);
+
+    if (value.length <= MAX_CHARS) setMessage(value);
   };
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
@@ -90,6 +93,28 @@ export default function ComposeTweet() {
             value={message}
           ></textarea>
 
+          <div className="text-gray-400 flex flex-col gap-1">
+            <span>
+              {message ? message.length : 0}/{MAX_CHARS}
+            </span>
+            <span
+              style={{ fontFamily: "system-ui" }}
+              className={
+                message && message.length >= MAX_CHARS
+                  ? "text-red-500"
+                  : message && message.length >= MAX_CHARS - 30
+                  ? "text-orange-400"
+                  : "opacity-0"
+              }
+            >
+              {message && message.length >= MAX_CHARS
+                ? "Ha alcanzado el límite de caracteres."
+                : message && message.length >= MAX_CHARS - 30
+                ? "Cerca del límite de caracteres."
+                : "Placeholder"}
+            </span>
+          </div>
+
           {imgURL && (
             <section className={styles.imgSection}>
               <button
@@ -110,7 +135,7 @@ export default function ComposeTweet() {
           <div className={styles.div}>
             <Button
               disabled={isButtonDisabled}
-              className={`${styles.button} rounded-full`}
+              className={`${styles.button} w-1/4 tracking-widest`}
             >
               Tweet
             </Button>

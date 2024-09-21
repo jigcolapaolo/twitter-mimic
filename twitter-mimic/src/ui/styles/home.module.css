@@ -48,6 +48,11 @@
   border-bottom: 1px solid #eee;
 }
 
+.article > section {
+  overflow: hidden;
+  overflow-wrap: break-word;
+}
+
 .article:hover {
   background: #f5f8fa;
   cursor: pointer;
