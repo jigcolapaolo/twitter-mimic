@@ -10,12 +10,15 @@ import CreateIcon from "@/ui/icons/Create";
 import HomeIcon from "@/ui/icons/Home";
 import SearchIcon from "@/ui/icons/SearchIcon";
 import { SyncLoader } from "react-spinners";
-import { listenLatestTweets, userSignOut } from "../../../firebase/client";
+import { listenLatestTweets } from "../../../firebase/client";
 import SignOutIcon from "@/ui/icons/SignOutIcon";
+import SignoutModal from "@/ui/components/SignoutModal/SignoutModal";
 
 export default function HomePage() {
   const [timeline, setTimeline] = useState<Timeline[]>([]);
   const user = useUser();
+
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   // Si el user esta logueado, hace el fetch (Se puede usar el Token tambien)
 
@@ -41,11 +44,6 @@ export default function HomePage() {
     //   });
   }, [user]);
 
-  const handleSignOut = () => {
-    if (!user) return;
-    userSignOut();
-  };
-
   return (
     <>
       <header className={styles.header}>
@@ -53,7 +51,7 @@ export default function HomePage() {
           <p>Inicio</p>
         </Link>
         <SignOutIcon
-          onClick={handleSignOut}
+          onClick={() => setIsModalOpen(!isModalOpen)}
           width={32}
           height={32}
           stroke="#0099ff"
@@ -95,6 +93,7 @@ export default function HomePage() {
           <CreateIcon width={32} height={32} stroke="#09f" />
         </Link>
       </nav>
+      <SignoutModal isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />
     </>
   );
 }

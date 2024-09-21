@@ -1,0 +1,58 @@
+.section {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(30, 58, 138, 0.7);
+    transition: opacity 0.3s;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+  }
+  
+  .opacityOpen {
+    opacity: 1;
+  }
+  
+  .opacityClosed {
+    opacity: 0;
+    pointer-events: none;
+  }
+  
+  .modalContent {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    background-color: #ffffff;
+    width: 80%;
+    height: 20%;
+    border: 2px solid #3498db;
+    border-radius: 0.5rem;
+    transition: opacity 0.3s;
+    color: var(--secondary-color);
+    font-family: system-ui;
+  }
+
+  .modalContent p {
+    font-size: 1.5rem;
+    cursor: default;
+  }
+  
+  .divBtns {
+    display: flex;
+    gap: 1rem;
+  }
+  
+  .divBtns button {
+    width: 3.5rem;
+    background-color: #87ceeb;
+    color: #ffffff;
+    padding: 0.5rem;
+    border-radius: 50%;
+    transition: background-color 0.3s;
+  }
+  
+  .divBtns button:hover {
+    background-color: #4682b4;
+  }
+  
