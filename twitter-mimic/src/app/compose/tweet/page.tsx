@@ -3,20 +3,17 @@
 import { Button } from "@/ui/components/Button";
 import styles from "@/ui/styles/composeTweet.module.css";
 import useUser from "../../../../hooks/useUser";
-import {
-  ChangeEvent,
-  DragEventHandler,
-  FormEvent,
-  useEffect,
-  useState,
-} from "react";
-import { addTweet, uploadImage } from "../../../../firebase/client";
+import { ChangeEvent, FormEvent, useState } from "react";
+import { addTweet } from "../../../../firebase/client";
 import { useRouter } from "next/navigation";
-import { getDownloadURL, UploadTask } from "firebase/storage";
 import Image from "next/image";
 import { Avatar } from "@/ui/components/Avatar";
 import ArrowLeft from "@/ui/icons/ArrowLeft";
 import Link from "next/link";
+import useUploadImg, {
+  DRAG_IMAGE_STATES,
+} from "../../../../hooks/useUploadImg";
+import ImgLoadingMsg from "@/ui/components/composeTweet/ImgLoadingMsg/ImgLoadingMsg";
 
 const COMPOSE_STATES = {
   USER_NOT_KNOWN: 0,
@@ -25,38 +22,21 @@ const COMPOSE_STATES = {
   ERROR: -1,
 };
 
-const DRAG_IMAGE_STATES = {
-  ERROR: -1,
-  NONE: 0,
-  DRAG_OVER: 1,
-  UPLOADING: 2,
-  COMPLETE: 3,
-};
-
 export default function ComposeTweet() {
   const { push } = useRouter();
   const [message, setMessage] = useState<string>();
   const [status, setStatus] = useState<number>(COMPOSE_STATES.USER_NOT_KNOWN);
-  const [drag, setDrag] = useState<number>(DRAG_IMAGE_STATES.NONE);
-  const [task, setTask] = useState<UploadTask | null>(null);
-  const [imgURL, setImgURL] = useState<string | null>(null);
 
   const user = useUser();
-
-  useEffect(() => {
-    if (task) {
-      const onProgress = () => {};
-      const onError = () => {};
-      const onComplete = () => {
-        // Obtengo la url de la imagen cargada para mostrarla
-        getDownloadURL(task.snapshot.ref).then((url) => {
-          setImgURL(url);
-        });
-      };
-
-      task.on("state_changed", onProgress, onError, onComplete);
-    }
-  }, [task]);
+  const {
+    drag,
+    imgURL,
+    uploadProgress,
+    setImgURL,
+    handleDragEnter,
+    handleDragLeave,
+    handleDrop,
+  } = useUploadImg();
 
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     const { value } = e.target;
@@ -79,25 +59,6 @@ export default function ComposeTweet() {
       .catch(() => {
         setStatus(COMPOSE_STATES.ERROR);
       });
-  };
-
-  const handleDragEnter: DragEventHandler<HTMLTextAreaElement> = (e) => {
-    e.preventDefault();
-    setDrag(DRAG_IMAGE_STATES.DRAG_OVER);
-  };
-
-  const handleDragLeave: DragEventHandler<HTMLTextAreaElement> = (e) => {
-    e.preventDefault();
-    setDrag(DRAG_IMAGE_STATES.NONE);
-  };
-
-  const handleDrop: DragEventHandler<HTMLTextAreaElement> = (e) => {
-    e.preventDefault();
-    // console.log(e.dataTransfer.files[0])
-    setDrag(DRAG_IMAGE_STATES.NONE);
-    const file = e.dataTransfer.files[0];
-    const task = uploadImage(file);
-    setTask(task);
   };
 
   const isButtonDisabled =
@@ -128,6 +89,7 @@ export default function ComposeTweet() {
             onDrop={handleDrop}
             value={message}
           ></textarea>
+
           {imgURL && (
             <section className={styles.imgSection}>
               <button
@@ -153,6 +115,7 @@ export default function ComposeTweet() {
               Tweet
             </Button>
           </div>
+          <ImgLoadingMsg drag={drag} uploadProgress={uploadProgress} />
         </form>
       </section>
     </>

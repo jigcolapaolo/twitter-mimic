@@ -48,7 +48,6 @@
   outline: 0;
   color: var(--container-color);
   min-height: 200px;
-  mask-image: linear-gradient(black 90%, transparent);
 }
 
 .imgSection {
