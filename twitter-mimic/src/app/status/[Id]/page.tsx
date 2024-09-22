@@ -1,5 +1,5 @@
 import { Button } from "@/ui/components/Button";
-import Tweet from "@/ui/components/Tweet";
+import TweetClient from "@/ui/components/Tweet";
 import Link from "next/link";
 import { fetchLatestTweets } from "../../../../firebase/client";
 import { firestore } from "../../../../firebase/admin";
@@ -38,7 +38,7 @@ export default async function TweetPage({
     const normalizedCreatedAt = +createdAt.toDate();
 
     const props = {
-      Id: id,
+      id: id,
       content: data?.content,
       img: data?.img,
       avatar: data?.avatar,
@@ -55,17 +55,7 @@ export default async function TweetPage({
           <ArrowLeft width={35} height={35} className={composeStyles.svg} />
         </Link>
         <div>
-          <Tweet
-            id={props.Id}
-            content={props.content}
-            img={props.img}
-            avatar={props.avatar}
-            userName={props.userName}
-            userId={props.userId}
-            createdAt={props.createdAt}
-            likesCount={props.likesCount}
-            sharedCount={props.sharedCount}
-          />
+          <TweetClient timeline={[props]} />
         </div>
       </>
     );

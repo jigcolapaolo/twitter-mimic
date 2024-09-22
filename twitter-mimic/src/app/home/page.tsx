@@ -3,7 +3,7 @@
 import styles from "@/ui/styles/home.module.css";
 import { useState, useEffect } from "react";
 import { Timeline } from "@/lib/definitions";
-import Tweet from "@/ui/components/Tweet";
+import TweetClient from "@/ui/components/Tweet";
 import Link from "next/link";
 import useUser from "../../../hooks/useUser";
 import CreateIcon from "@/ui/icons/Create";
@@ -19,7 +19,7 @@ export default function HomePage() {
   const user = useUser();
 
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-
+  
   // Si el user esta logueado, hace el fetch (Se puede usar el Token tambien)
 
   // useEffect(() => {
@@ -65,22 +65,7 @@ export default function HomePage() {
             <SyncLoader color="#78b2f7" />
           </div>
         )}
-        {timeline.map((tweet) => {
-          return (
-            <Tweet
-              key={tweet.id}
-              id={tweet.id}
-              img={tweet.img}
-              userId={tweet.userId}
-              userName={tweet.userName}
-              avatar={tweet.avatar}
-              content={tweet.content}
-              likesCount={tweet.likesCount}
-              sharedCount={tweet.sharedCount}
-              createdAt={tweet.createdAt}
-            />
-          );
-        })}
+        <TweetClient timeline={timeline} />
       </section>
       <nav className={styles.nav}>
         <Link href="/home">
