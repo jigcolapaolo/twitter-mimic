@@ -3,6 +3,8 @@ import MenuIcon from "../icons/MenuIcon";
 import EditIcon from "../icons/EditIcon";
 import DeleteIcon from "../icons/DeleteIcon";
 import styles from "../styles/home.module.css";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export default function TweetMenu({
   id,
@@ -13,12 +15,30 @@ export default function TweetMenu({
   isMenuOpen: string | undefined;
   setIsMenuOpen: React.Dispatch<React.SetStateAction<string | undefined>>;
 }) {
+  const router = useRouter();
 
   const handleMenuClick: MouseEventHandler<HTMLButtonElement> = (e) => {
     e.preventDefault();
     e.stopPropagation();
 
     setIsMenuOpen(isMenuOpen === id ? undefined : id);
+  };
+
+  const handleDeleteClick: MouseEventHandler<HTMLButtonElement> = async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    fetch(`/api/tweets/delete/${id}`, {
+      method: "DELETE",
+    }).then((response) => {
+      if (response.ok) {
+        toast.success("Tweet eliminado exitosamente");
+        setIsMenuOpen(undefined);
+        router.push("/home");
+      } else {
+        toast.error("Error al eliminar el tweet");
+      }
+    });
   };
 
   return (
@@ -32,14 +52,14 @@ export default function TweetMenu({
           isMenuOpen === id ? styles.opacityOpen : styles.opacityClosed
         }`}
       >
-        <p>
+        <button>
           <EditIcon />
           Editar Tweet
-        </p>
-        <p>
+        </button>
+        <button onClick={handleDeleteClick}>
           <DeleteIcon />
           Eliminar Tweet
-        </p>
+        </button>
       </div>
     </div>
   );

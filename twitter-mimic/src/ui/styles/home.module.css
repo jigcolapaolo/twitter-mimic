@@ -93,7 +93,7 @@
 
 .img {
   height: auto;
-  width: 100%;
+  width: 95%;
   border-radius: 10px;
   margin: 10px;
 }
@@ -182,6 +182,7 @@
 
 .opacityClosed {
   opacity: 0;
+  pointer-events: none;
 }
 
 /* Tweet Menu*/
@@ -200,13 +201,19 @@
   transition: opacity 0.2s ease-in-out;
 }
 
-.tweetMenuDiv > div p {
+.tweetMenuDiv > div button {
   display: flex;
   gap: 1rem;
   color: white;
   transition: color 0.2s ease-in-out;
+  font-family: system-ui;
+  font-weight: 500;
 }
 
-.tweetMenuDiv > div p:hover {
+.tweetMenuDiv > div button:hover {
   color: var(--primary-color-alt);
+}
+
+.tweetMenuDiv > div button:nth-child(2):hover {
+  color: rgb(255, 0, 0);
 }
