@@ -106,12 +106,6 @@ export default function EditTweetPage({ params }: { params: { Id: string } }) {
     if (value.length <= MAX_CHARS) setMessage(value);
   };
 
-  useEffect(() => {
-    console.log("imgURL:", imgURL);
-    console.log("tweet?.img:", tweet?.img);
-  }, [imgURL, tweet?.img]);
-  
-
   const isButtonDisabled =
     !message ||
     message.length === 0 ||

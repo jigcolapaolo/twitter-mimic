@@ -14,6 +14,7 @@ import ChainIcon from "../icons/LinkIcon";
 import { toast } from "sonner";
 import CommentIcon from "../icons/CommentIcon";
 import TweetMenu from "./TweetMenu";
+import useUser from "../../../hooks/useUser";
 
 export default function TweetClient({ timeline }: { timeline: Timeline[] }) {
   const [isMenuOpen, setIsMenuOpen] = useState<string | undefined>(undefined);
@@ -48,7 +49,7 @@ function Tweet({
   content,
   id,
   img,
-  // userId,
+  userId,
   createdAt,
   likesCount,
   sharedCount,
@@ -60,6 +61,7 @@ function Tweet({
 }) {
   const timeago = useTimeAgo(createdAt);
   const router = useRouter();
+  const user = useUser()
 
   const handleArticleClick: MouseEventHandler<HTMLElement> = (e) => {
     e.preventDefault();
@@ -94,7 +96,7 @@ function Tweet({
             </Link>
           </div>
 
-          <TweetMenu id={id} isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} />
+          {user?.uid === userId && <TweetMenu id={id} isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} />}
         </header>
         <p className={styles.p}>{content}</p>
         {img && (
