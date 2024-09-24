@@ -1,26 +1,38 @@
 import { User } from "@/lib/definitions";
 import { initializeApp } from "firebase/app";
-import { getAuth, signInWithPopup, GithubAuthProvider, GoogleAuthProvider } from "firebase/auth";
+import {
+  getAuth,
+  signInWithPopup,
+  GithubAuthProvider,
+  GoogleAuthProvider,
+} from "firebase/auth";
 import {
   addDoc,
+  arrayRemove,
+  arrayUnion,
   collection,
+  doc,
+  getDoc,
   getDocs,
   getFirestore,
   onSnapshot,
   orderBy,
   query,
   serverTimestamp,
+  setDoc,
+  updateDoc,
 } from "firebase/firestore";
 import { getStorage, ref, uploadBytesResumable } from "firebase/storage";
 
-
-const firebaseConfig = JSON.parse(process.env.NEXT_PUBLIC_FIREBASE_CONFIG || "{}");
+const firebaseConfig = JSON.parse(
+  process.env.NEXT_PUBLIC_FIREBASE_CONFIG || "{}"
+);
 
 const app = initializeApp(firebaseConfig);
 
 const db = getFirestore(app);
 
-const mapUserFromFirebaseAuthToUser = (user: any): User => {
+const mapUserFromFirebaseAuthToUser = (user: any, likedTweets: string[]): User => {
   const userData = user.user || user;
   const { email, photoURL, displayName, uid } = userData;
 
@@ -29,14 +41,23 @@ const mapUserFromFirebaseAuthToUser = (user: any): User => {
     avatar: photoURL,
     displayName,
     uid,
+    likedTweets
   };
 };
 
 export const onAuthStateChanged = (onChange: any) => {
-  return getAuth(app).onAuthStateChanged((user) => {
-    console.log(user)
+  return getAuth(app).onAuthStateChanged(async (user) => {
+    // console.log(user)
     if (user) {
-      const normalizedUser = mapUserFromFirebaseAuthToUser(user);
+
+      const userRef = doc(db, "users", user.uid)
+      const userSnap = await getDoc(userRef)
+
+      let likedTweets: string[] = []
+
+      if(userSnap.exists()) likedTweets = userSnap.data().likedTweets || []
+
+      const normalizedUser = mapUserFromFirebaseAuthToUser(user, likedTweets);
       onChange(normalizedUser);
     } else {
       onChange(null);
@@ -67,29 +88,24 @@ export const loginWithGitHub = async (): Promise<void> => {
 
     // En el login se hace automaticamente un onAuthStateChanged (Ejecuta el useEffect)
     await signInWithPopup(auth, githubProvider);
-  } catch (error) {
-    console.log(error);
-  }
+  } catch (error) {}
 };
 
 export const loginWithGoogle = async (): Promise<void> => {
   const auth = getAuth(app);
-  
+
   const googleProvider = new GoogleAuthProvider();
-  googleProvider.addScope("email")
+  googleProvider.addScope("email");
 
   try {
-    console.log(googleProvider)
     await signInWithPopup(auth, googleProvider);
-  } catch (error) {
-    console.log("Error Google" + error);
-  }
+  } catch (error) {}
 };
 
 export const userSignOut = () => {
   const auth = getAuth(app);
   return auth.signOut();
-}
+};
 
 export const addTweet = async ({
   avatar,
@@ -119,6 +135,36 @@ export const addTweet = async ({
     // console.log("Tweet añadido con éxito!");
   } catch (error) {
     // console.error("Error añadiendo el tweet: ", error);
+  }
+};
+
+export const likeTweet = async ({
+  tweetId,
+  userId,
+}: {
+  tweetId: string;
+  userId: string;
+}) => {
+  const userRef = doc(db, "users", userId);
+  const tweetRef = doc(db, "tweets", tweetId);
+
+  try {
+    const [userSnap, tweetSnap] = await Promise.all([getDoc(userRef), getDoc(tweetRef)]);
+
+    if (!tweetSnap.exists()) throw new Error("Tweet no encontrado");
+
+    const tweetLikesCount = tweetSnap.data().likesCount || 0;
+    const isLiked = userSnap.exists() && userSnap.data().likedTweets?.includes(tweetId);
+
+    await setDoc(userRef, {
+      likedTweets: isLiked ? arrayRemove(tweetId) : arrayUnion(tweetId),
+    }, { merge: true });
+
+    await updateDoc(tweetRef, {
+      likesCount: isLiked ? tweetLikesCount - 1 : tweetLikesCount + 1,
+    });
+  } catch (error) {
+    throw error;
   }
 };
 

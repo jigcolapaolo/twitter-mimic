@@ -3,6 +3,7 @@ export interface User {
   avatar: string;
   displayName: string;
   uid: string;
+  likedTweets: string[];
 }
 
 export interface Timeline {

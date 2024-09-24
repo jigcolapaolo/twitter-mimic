@@ -65,7 +65,7 @@ export default function HomePage() {
             <SyncLoader color="#78b2f7" />
           </div>
         )}
-        <TweetClient timeline={timeline} />
+        <TweetClient timeline={timeline} likedTweets={user?.likedTweets || []} />
       </section>
       <nav className={styles.nav}>
         <Link href="/home">

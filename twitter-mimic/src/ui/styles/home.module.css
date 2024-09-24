@@ -136,7 +136,7 @@
 
 .footer button {
   display: flex;
-  padding: .3rem 1rem;
+  padding: 0.3rem 1rem;
   justify-content: space-around;
   align-items: center;
   gap: 5px;
@@ -173,6 +173,9 @@
   font-family: system-ui;
 }
 
+.footer button span:hover {
+  text-decoration: underline;
+}
 
 /* Modal */
 

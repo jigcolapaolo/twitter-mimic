@@ -8,15 +8,16 @@ import Link from "next/link";
 import { MouseEventHandler, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Timeline } from "@/lib/definitions";
-import { LikeIcon } from "../icons/Like";
+import { LikeIcon, LikeIconFilled } from "../icons/Like";
 import RetweetIcon from "../icons/Retweet";
 import ChainIcon from "../icons/LinkIcon";
 import { toast } from "sonner";
 import CommentIcon from "../icons/CommentIcon";
 import TweetMenu from "./TweetMenu";
 import useUser from "../../../hooks/useUser";
+import { likeTweet } from "../../../firebase/client";
 
-export default function TweetClient({ timeline }: { timeline: Timeline[] }) {
+export default function TweetClient({ timeline, likedTweets }: { timeline: Timeline[], likedTweets: string[] }) {
   const [isMenuOpen, setIsMenuOpen] = useState<string | undefined>(undefined);
 
   return (
@@ -36,6 +37,7 @@ export default function TweetClient({ timeline }: { timeline: Timeline[] }) {
             createdAt={tweet.createdAt}
             isMenuOpen={isMenuOpen}
             setIsMenuOpen={setIsMenuOpen}
+            isLiked={likedTweets?.includes(tweet.id) ? true : false}
           />
         );
       })}
@@ -55,13 +57,19 @@ function Tweet({
   sharedCount,
   isMenuOpen,
   setIsMenuOpen,
+  isLiked,
 }: Timeline & {
   isMenuOpen: string | undefined;
   setIsMenuOpen: React.Dispatch<React.SetStateAction<string | undefined>>;
+  isLiked: boolean
 }) {
   const timeago = useTimeAgo(createdAt);
   const router = useRouter();
   const user = useUser()
+
+  const [isTweetLiked, setIsTweetLiked] = useState<boolean>(isLiked);
+  const [likesCountState, setLikesCountState] = useState<number>(likesCount);
+
 
   const handleArticleClick: MouseEventHandler<HTMLElement> = (e) => {
     e.preventDefault();
@@ -77,6 +85,27 @@ function Tweet({
     setTimeout(() => {
       toast.dismiss(toastId);
     }, 2000);
+  };
+
+  const handleLikeTweet: MouseEventHandler<HTMLButtonElement> = async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (user) {
+      const previousLikedState = isTweetLiked;
+      const previousLikesCount = likesCountState;
+
+      setIsTweetLiked((prev) => !prev);
+      setLikesCountState((prev) => (isTweetLiked ? prev - 1 : prev + 1));
+
+      try {
+        await likeTweet({ tweetId: id, userId: user.uid });
+      } catch (error) {
+        setIsTweetLiked(previousLikedState);
+        setLikesCountState(previousLikesCount);
+        toast.error("Error al dar like, inténtalo de nuevo.");
+      }
+    }
   };
 
   return (
@@ -96,7 +125,7 @@ function Tweet({
             </Link>
           </div>
 
-          {user?.uid === userId && <TweetMenu id={id} isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} />}
+          {user && user.uid === userId && <TweetMenu id={id} isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} />}
         </header>
         <p className={styles.p}>{content}</p>
         {img && (
@@ -109,9 +138,9 @@ function Tweet({
           />
         )}
         <footer className={styles.footer}>
-          <button>
-            <LikeIcon />
-            <span>{likesCount}</span>
+          <button onClick={handleLikeTweet}>
+            {isTweetLiked ? <LikeIconFilled /> : <LikeIcon />}
+            <span>{likesCountState}</span>
           </button>
           <button>
             <CommentIcon />
