@@ -41,6 +41,13 @@ export default function TweetMenu({
     });
   };
 
+  const handleEditClick: MouseEventHandler<HTMLButtonElement> = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    router.push(`/status/edit/${id}`);
+
+  }
+
   return (
     <div className={styles.tweetMenuDiv}>
       <button onClick={handleMenuClick}>
@@ -52,7 +59,7 @@ export default function TweetMenu({
           isMenuOpen === id ? styles.opacityOpen : styles.opacityClosed
         }`}
       >
-        <button>
+        <button onClick={handleEditClick}>
           <EditIcon />
           Editar Tweet
         </button>
