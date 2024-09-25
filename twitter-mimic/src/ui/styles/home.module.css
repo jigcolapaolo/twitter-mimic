@@ -98,6 +98,10 @@
   margin: 10px;
 }
 
+.article section {
+  width: 100%;
+}
+
 .nav {
   bottom: 0;
   border-top: 1px solid #eee;
@@ -123,8 +127,11 @@
   background-position: center;
 }
 
-.article section {
-  width: 100%;
+.selectedNav {
+  background: radial-gradient(#00336627 15%, transparent 16%);
+  background-size: 180px 180px;
+  background-position: center;
+  stroke: var(--secondary-color);
 }
 
 .footer {
