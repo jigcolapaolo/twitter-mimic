@@ -12,6 +12,7 @@ import SignOutIcon from "@/ui/icons/SignOutIcon";
 import SignoutModal from "@/ui/components/SignoutModal/SignoutModal";
 import FooterNav from "@/ui/components/FooterNav/FooterNav";
 import { usePathname } from "next/navigation";
+import Image from "next/image";
 
 export default function HomePage({ children }: { children: React.ReactNode }) {
   const [timeline, setTimeline] = useState<Timeline[]>([]);
@@ -48,7 +49,13 @@ export default function HomePage({ children }: { children: React.ReactNode }) {
     <>
       <header className={styles.header}>
         <Link href={"/home"}>
-          <p>Twitter Mimic</p>
+          <Image
+            src="/TwitterMimicLogo.png"
+            alt="Twitter Mimic Logo"
+            width={40}
+            height={40}
+            className={styles.imageHover}
+          />
         </Link>
         <SignOutIcon
           onClick={() => setIsModalOpen(!isModalOpen)}
