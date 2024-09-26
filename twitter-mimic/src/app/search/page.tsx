@@ -12,12 +12,6 @@ import HomePage from "../home/page";
 import SearchFilters from "@/ui/components/app/search/SearchFilters";
 
 export default function SearchPage() {
-  // Al principio aparecen todos los tweets
-  // Opcion filtrado por tweets con mas likes, mis tweets o tweets de otros usuarios
-  // Los filtros deben ser checkboxes y solo debe haber un estado que maneje los 3 filtros
-
-  // Aparte agregar una barra de busqueda en donde tenga autocompletado con un modal doble que busque
-  // usuarios y tweets
 
   const [timeline, setTimeline] = useState<Timeline[]>([]);
   const [filteredTweets, setFilteredTweets] = useState<Timeline[]>(timeline);

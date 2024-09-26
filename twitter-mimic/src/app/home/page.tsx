@@ -58,7 +58,6 @@ export default function HomePage({ children }: { children: React.ReactNode }) {
           fill="white"
         />
       </header>
-
       {children}
       {pathname === "/home" && (
         <section className={styles.section}>

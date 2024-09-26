@@ -32,32 +32,80 @@ const app = initializeApp(firebaseConfig);
 
 const db = getFirestore(app);
 
-const mapUserFromFirebaseAuthToUser = (user: any, likedTweets: string[]): User => {
+const mapUserFromFirebaseAuthToUser = async (
+  user: any,
+  likedTweets: string[]
+): Promise<User> => {
   const userData = user.user || user;
   const { email, photoURL, displayName, uid } = userData;
 
+  const userRef = doc(db, "users", uid);
+  const userSnap = await getDoc(userRef);
+
+  let userName = "";
+  let avatarUrl = "";
+
+  if (!userSnap.exists()) {
+    await setDoc(
+      userRef,
+      {
+        displayName: displayName,
+        photoURL: photoURL,
+      },
+      { merge: true }
+    );
+  } else {
+    userName = userSnap.data().displayName;
+    avatarUrl = userSnap.data().photoURL;
+  }
+
   return {
     email,
-    avatar: photoURL,
-    displayName,
+    avatar: avatarUrl === "" ? photoURL : avatarUrl,
+    displayName: userName === "" ? displayName : userName,
     uid,
-    likedTweets
+    likedTweets,
   };
 };
+
+export const fetchUsersByQuery = async (nameQuery: string) => {
+  const usersRef = collection(db, "users");
+  const queryUsers = query(usersRef, orderBy("displayName", "asc"));
+  
+  const snapshot = await getDocs(queryUsers);
+  
+  return snapshot.docs
+    .map(mapUserFromFirebaseToUser)
+    .filter((user) =>
+      user.displayName.toLowerCase().includes(nameQuery.toLowerCase())
+    );
+}
+
+const mapUserFromFirebaseToUser = (doc: any): User => {
+
+  const { photoURL, displayName } = doc.data();
+
+  return {
+    uid: doc.id,
+    avatar: photoURL,
+    displayName,
+    email: "",
+    likedTweets: [],
+  }
+}
 
 export const onAuthStateChanged = (onChange: any) => {
   return getAuth(app).onAuthStateChanged(async (user) => {
     // console.log(user)
     if (user) {
+      const userRef = doc(db, "users", user.uid);
+      const userSnap = await getDoc(userRef);
 
-      const userRef = doc(db, "users", user.uid)
-      const userSnap = await getDoc(userRef)
+      let likedTweets: string[] = [];
 
-      let likedTweets: string[] = []
+      if (userSnap.exists()) likedTweets = userSnap.data().likedTweets || [];
 
-      if(userSnap.exists()) likedTweets = userSnap.data().likedTweets || []
-
-      const normalizedUser = mapUserFromFirebaseAuthToUser(user, likedTweets);
+      const normalizedUser = await mapUserFromFirebaseAuthToUser(user, likedTweets);
       onChange(normalizedUser);
     } else {
       onChange(null);
@@ -149,16 +197,24 @@ export const likeTweet = async ({
   const tweetRef = doc(db, "tweets", tweetId);
 
   try {
-    const [userSnap, tweetSnap] = await Promise.all([getDoc(userRef), getDoc(tweetRef)]);
+    const [userSnap, tweetSnap] = await Promise.all([
+      getDoc(userRef),
+      getDoc(tweetRef),
+    ]);
 
     if (!tweetSnap.exists()) throw new Error("Tweet no encontrado");
 
     const tweetLikesCount = tweetSnap.data().likesCount || 0;
-    const isLiked = userSnap.exists() && userSnap.data().likedTweets?.includes(tweetId);
+    const isLiked =
+      userSnap.exists() && userSnap.data().likedTweets?.includes(tweetId);
 
-    await setDoc(userRef, {
-      likedTweets: isLiked ? arrayRemove(tweetId) : arrayUnion(tweetId),
-    }, { merge: true });
+    await setDoc(
+      userRef,
+      {
+        likedTweets: isLiked ? arrayRemove(tweetId) : arrayUnion(tweetId),
+      },
+      { merge: true }
+    );
 
     await updateDoc(tweetRef, {
       likesCount: isLiked ? tweetLikesCount - 1 : tweetLikesCount + 1,
