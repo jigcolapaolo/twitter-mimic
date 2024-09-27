@@ -3,9 +3,11 @@ import styles from "@/ui/styles/search.module.css";
 import { ChangeEvent, useEffect, useMemo, useState } from "react";
 import useFilters, { TWEET_FILTER } from "../../../../../hooks/useFilters";
 import SearchIcon from "@/ui/icons/SearchIcon";
-import { fetchUsersByQuery } from "../../../../../firebase/client";
-import { Avatar } from "../../Avatar";
-import { useDebounce } from "../../../../../hooks/useDebounce";
+import UserListModal from "../../UserListModal/UserListModal";
+import useSearchUsers, {
+  SEARCH_STATES,
+} from "../../../../../hooks/useSearchUsers";
+import { SyncLoader } from "react-spinners";
 
 interface SearchFiltersProps {
   timeline: Timeline[];
@@ -20,38 +22,21 @@ export default function SearchFilters({
 }: SearchFiltersProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
+  const { filteredUsers, setFilteredUsers, searchState } = useSearchUsers({
+    searchQuery,
+  });
   const { filter, setFilter, handleChangeFilter, filteredTweets } = useFilters({
     timeline,
     userId,
     selectedUser,
-    setSelectedUser
+    setSelectedUser,
   });
 
+  const filteredUsersMemorized = useMemo(() => filteredUsers, [filteredUsers]);
 
   useEffect(() => {
     onFilterChange(filteredTweets);
   }, [filteredTweets, onFilterChange]);
-
-  const debouncedSearchQuery = useDebounce(searchQuery, 500);
-
-  useEffect(() => {
-    const fetchUsers = async () => {
-      if (debouncedSearchQuery) {
-        fetchUsersByQuery(debouncedSearchQuery)
-          .then((users) => {
-            setFilteredUsers(users);
-          })
-          .catch((error) => {
-            throw new Error(error);
-          });
-      } else {
-        setFilteredUsers([]);
-      }
-    };
-
-    fetchUsers();
-  }, [debouncedSearchQuery]);
 
   const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
@@ -66,12 +51,7 @@ export default function SearchFilters({
     if (filter === TWEET_FILTER.MY_TWEETS) {
       setFilter(TWEET_FILTER.TOP);
     }
-
   };
-
-  const filteredUsersMemorized = useMemo(() => filteredUsers, [filteredUsers]);
-
-
 
   return (
     <>
@@ -82,10 +62,21 @@ export default function SearchFilters({
           </div>
           <input
             type="text"
-            placeholder="Buscar..."
+            placeholder={"Buscar usuarios..."}
             value={searchQuery}
             onChange={handleSearchChange}
           />
+          {searchState === SEARCH_STATES.LOADING && (
+            <SyncLoader size={5} color="#78b2f7" />
+          )}
+          {searchQuery !== "" && (
+            <button
+              onClick={() => setSearchQuery("")}
+              className={styles.cleanQueryBtn}
+            >
+              X
+            </button>
+          )}
         </div>
         <div className={styles.filtersDiv}>
           <div className={styles.checkboxDiv}>
@@ -129,20 +120,11 @@ export default function SearchFilters({
           </div>
         </div>
       </section>
-      {filteredUsersMemorized.length > 0 && (
-        <div className={styles.autocompleteList}>
-          {filteredUsersMemorized.map((user) => (
-            <div
-              key={user.uid}
-              className={styles.autocompleteItem}
-              onClick={() => handleUserSelect(user)}
-            >
-              <Avatar src={user.avatar} alt={user.displayName} />
-              {user.displayName}
-            </div>
-          ))}
-        </div>
-      )}
+
+      <UserListModal
+        users={filteredUsersMemorized}
+        handleUserSelect={handleUserSelect}
+      />
     </>
   );
 }
