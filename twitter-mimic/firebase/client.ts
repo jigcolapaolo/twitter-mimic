@@ -68,6 +68,19 @@ const mapUserFromFirebaseAuthToUser = async (
   };
 };
 
+const mapUserFromFirebaseToUser = (doc: any): User => {
+
+  const { photoURL, displayName } = doc.data();
+
+  return {
+    uid: doc.id,
+    avatar: photoURL,
+    displayName,
+    email: "",
+    likedTweets: [],
+  }
+}
+
 export const fetchUsersByQuery = async (nameQuery: string) => {
   const usersRef = collection(db, "users");
   const queryUsers = query(usersRef, orderBy("displayName", "asc"));
@@ -81,18 +94,18 @@ export const fetchUsersByQuery = async (nameQuery: string) => {
     );
 }
 
-const mapUserFromFirebaseToUser = (doc: any): User => {
-
-  const { photoURL, displayName } = doc.data();
-
-  return {
-    uid: doc.id,
-    avatar: photoURL,
-    displayName,
-    email: "",
-    likedTweets: [],
-  }
+export const fetchUsersById = async (ids: string[]) => {
+  const usersRef = collection(db, "users");
+  const queryUsers = query(usersRef, orderBy("displayName", "asc"));
+  
+  const snapshot = await getDocs(queryUsers);
+  
+  return snapshot.docs
+    .map(mapUserFromFirebaseToUser) 
+    .filter((user) => ids.includes(user.uid));
 }
+
+
 
 export const onAuthStateChanged = (onChange: any) => {
   return getAuth(app).onAuthStateChanged(async (user) => {
@@ -216,6 +229,14 @@ export const likeTweet = async ({
       { merge: true }
     );
 
+    await setDoc(
+      tweetRef,
+      {
+        usersLiked: isLiked ? arrayRemove(userId) : arrayUnion(userId),
+      },
+      { merge: true }
+    )
+
     await updateDoc(tweetRef, {
       likesCount: isLiked ? tweetLikesCount - 1 : tweetLikesCount + 1,
     });
@@ -257,6 +278,7 @@ export const fetchLatestTweets = async () => {
     return snapshot.docs.map(mapTweetFromFirebaseToTweetObject);
   });
 };
+
 
 // Firebase STORAGE
 export const uploadImage = (file: File) => {

@@ -16,6 +16,13 @@ import CommentIcon from "../icons/CommentIcon";
 import TweetMenu from "./TweetMenu";
 import useUser from "../../../hooks/useUser";
 import useLikeTweet from "../../../hooks/useLikeTweet";
+import { fetchUsersById } from "../../../firebase/client";
+import UserListModal from "./UserListModal/UserListModal";
+
+interface LikeModalState {
+  id: string | undefined;
+  usersLiked: User[];
+}
 
 export default function TweetClient({
   timeline,
@@ -25,6 +32,10 @@ export default function TweetClient({
   likedTweets: string[];
 }) {
   const [isMenuOpen, setIsMenuOpen] = useState<string | undefined>(undefined);
+  const [likeModalState, setLikeModalState] = useState<LikeModalState>({
+    id: undefined,
+    usersLiked: [],
+  });
 
   return (
     <>
@@ -43,7 +54,10 @@ export default function TweetClient({
             createdAt={tweet.createdAt}
             isMenuOpen={isMenuOpen}
             setIsMenuOpen={setIsMenuOpen}
-            isLiked={likedTweets?.includes(tweet.id) ? true : false}
+            isLiked={likedTweets?.includes(tweet.id)}
+            usersLiked={tweet.usersLiked}
+            likeModalState={likeModalState}
+            setLikeModalState={setLikeModalState}
           />
         );
       })}
@@ -64,10 +78,15 @@ function Tweet({
   isMenuOpen,
   setIsMenuOpen,
   isLiked,
+  usersLiked,
+  likeModalState,
+  setLikeModalState,
 }: Timeline & {
   isMenuOpen: string | undefined;
   setIsMenuOpen: React.Dispatch<React.SetStateAction<string | undefined>>;
   isLiked: boolean;
+  likeModalState: LikeModalState;
+  setLikeModalState: React.Dispatch<React.SetStateAction<LikeModalState>>;
 }) {
   const timeago = useTimeAgo(createdAt);
   const router = useRouter();
@@ -78,6 +97,7 @@ function Tweet({
     id,
     user as User
   );
+  const [loadingUsers, setLoadingUsers] = useState(false);
 
   const handleArticleClick: MouseEventHandler<HTMLElement> = (e) => {
     e.preventDefault();
@@ -93,6 +113,28 @@ function Tweet({
     setTimeout(() => {
       toast.dismiss(toastId);
     }, 2000);
+  };
+
+  const handleUserLike: MouseEventHandler<HTMLSpanElement> = async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (likeModalState.id === id) {
+      setLikeModalState({ id: undefined, usersLiked: [] });
+      return;
+    }
+
+    if (!usersLiked || usersLiked.length === 0) return;
+    setLoadingUsers(true);
+
+    try {
+      const users = await fetchUsersById(usersLiked);
+      setLikeModalState({ id, usersLiked: users });
+    } catch (error) {
+      toast.error("Error al cargar los usuarios");
+    } finally {
+      setLoadingUsers(false);
+    }
   };
 
   return (
@@ -133,7 +175,7 @@ function Tweet({
         <footer className={styles.footer}>
           <button onClick={handleLikeTweet}>
             {isTweetLiked ? <LikeIconFilled /> : <LikeIcon />}
-            <span>{likesCountState}</span>
+            <span onClick={handleUserLike}>{likesCountState}</span>
           </button>
           <button>
             <CommentIcon />
@@ -147,6 +189,14 @@ function Tweet({
             <ChainIcon />
           </button>
         </footer>
+        {(likeModalState.id === id || loadingUsers) && (
+          <UserListModal
+            users={likeModalState.usersLiked}
+            handleUserSelect={() => {}}
+            className={`${styles.likeModalDiv}`}
+            loadingUsers={loadingUsers}
+          />
+        )}
       </section>
     </article>
   );

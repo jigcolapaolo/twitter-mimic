@@ -17,4 +17,5 @@ export interface Timeline {
   likesCount: number;
   sharedCount: number;
   createdAt: number;
+  usersLiked?: string[];
 }

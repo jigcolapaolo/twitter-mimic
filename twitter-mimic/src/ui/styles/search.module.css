@@ -19,6 +19,7 @@
     justify-content: space-evenly;
     align-items: center;
     height: 4rem;
+    z-index: 20;
 
 }
 

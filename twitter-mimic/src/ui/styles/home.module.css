@@ -42,6 +42,25 @@
 }
 
 /* Tweet */
+
+/* Tweet Like Modal */
+
+.likeModalDiv {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  bottom: 0;
+  margin-bottom: 2rem;
+  background: white;
+  border: 1px solid var(--primary-opacity);
+  border-radius: 8px;
+  width: auto;
+  min-height: 50px;
+  max-height: calc(100% - 2rem);
+  z-index: 10;
+  overflow-y: auto;
+}
+
 .article {
   display: flex;
   padding: 10px 15px;
@@ -51,6 +70,8 @@
 .article > section {
   overflow: hidden;
   overflow-wrap: break-word;
+  position: relative;
+  width: 100%;
 }
 
 .tweetHeader {
@@ -96,10 +117,6 @@
   width: 95%;
   border-radius: 10px;
   margin: 10px;
-}
-
-.article section {
-  width: 100%;
 }
 
 .nav {

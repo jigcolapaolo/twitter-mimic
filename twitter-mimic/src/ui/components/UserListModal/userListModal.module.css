@@ -12,7 +12,7 @@
     max-height: 200px;
     overflow-y: auto;
   }
-  
+
   .autocompleteItem {
     display: flex;
     justify-content: center;

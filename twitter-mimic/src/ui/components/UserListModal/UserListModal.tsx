@@ -2,6 +2,7 @@ import { User } from "@/lib/definitions";
 import styles from "./userListModal.module.css";
 import { Avatar } from "../Avatar";
 import { useEffect, useState } from "react";
+import { SyncLoader } from "react-spinners";
 
 interface UserListModalProps {
   users: User[];
@@ -11,7 +12,9 @@ interface UserListModalProps {
 export default function UserListModal({
   users,
   handleUserSelect,
-}: UserListModalProps) {
+  className = "",
+  loadingUsers = false,
+}: UserListModalProps & { className?: string; loadingUsers?: boolean }) {
   const [showNoResults, setShowNoResults] = useState(false);
 
   useEffect(() => {
@@ -30,8 +33,14 @@ export default function UserListModal({
 
   return (
     <>
-      {users.length > 0 && (
-        <section className={styles.autocompleteList}>
+      {loadingUsers ? (
+        <section className={className !== "" ? className : styles.autocompleteList}>
+          <div className={styles.autocompleteItem}>
+            <SyncLoader size={5} color="#78b2f7" />
+          </div>
+        </section>
+      ) : users.length > 0 ? (
+        <section className={className !== "" ? className : styles.autocompleteList}>
           {users.map((user) => (
             <div
               key={user.uid}
@@ -43,11 +52,12 @@ export default function UserListModal({
             </div>
           ))}
         </section>
-      )}
-      {showNoResults && (
-        <section className={styles.autocompleteList}>
-          <div className={styles.autocompleteItem}>No hay resultados</div>
-        </section>
+      ) : (
+        showNoResults && (
+          <section className={className !== "" ? className : styles.autocompleteList}>
+            <div className={styles.autocompleteItem}>No hay resultados</div>
+          </section>
+        )
       )}
     </>
   );
