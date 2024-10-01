@@ -7,6 +7,7 @@
   margin: 0.4rem;
   width: fit-content;
   border-radius: 9999px;
+  outline: 0;
 }
 
 .svg {
