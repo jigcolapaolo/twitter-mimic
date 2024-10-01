@@ -11,6 +11,7 @@ import {
   arrayRemove,
   arrayUnion,
   collection,
+  deleteDoc,
   doc,
   getDoc,
   getDocs,
@@ -21,6 +22,7 @@ import {
   serverTimestamp,
   setDoc,
   updateDoc,
+  where,
 } from "firebase/firestore";
 import { getStorage, ref, uploadBytesResumable } from "firebase/storage";
 
@@ -34,7 +36,8 @@ const db = getFirestore(app);
 
 const mapUserFromFirebaseAuthToUser = async (
   user: any,
-  likedTweets: string[]
+  likedTweets: string[],
+  sharedTweets: string[]
 ): Promise<User> => {
   const userData = user.user || user;
   const { email, photoURL, displayName, uid } = userData;
@@ -65,11 +68,11 @@ const mapUserFromFirebaseAuthToUser = async (
     displayName: userName === "" ? displayName : userName,
     uid,
     likedTweets,
+    sharedTweets,
   };
 };
 
 const mapUserFromFirebaseToUser = (doc: any): User => {
-
   const { photoURL, displayName } = doc.data();
 
   return {
@@ -78,34 +81,33 @@ const mapUserFromFirebaseToUser = (doc: any): User => {
     displayName,
     email: "",
     likedTweets: [],
-  }
-}
+    sharedTweets: [],
+  };
+};
 
 export const fetchUsersByQuery = async (nameQuery: string) => {
   const usersRef = collection(db, "users");
   const queryUsers = query(usersRef, orderBy("displayName", "asc"));
-  
+
   const snapshot = await getDocs(queryUsers);
-  
+
   return snapshot.docs
     .map(mapUserFromFirebaseToUser)
     .filter((user) =>
       user.displayName.toLowerCase().includes(nameQuery.toLowerCase())
     );
-}
+};
 
 export const fetchUsersById = async (ids: string[]) => {
   const usersRef = collection(db, "users");
   const queryUsers = query(usersRef, orderBy("displayName", "asc"));
-  
+
   const snapshot = await getDocs(queryUsers);
-  
+
   return snapshot.docs
-    .map(mapUserFromFirebaseToUser) 
+    .map(mapUserFromFirebaseToUser)
     .filter((user) => ids.includes(user.uid));
-}
-
-
+};
 
 export const onAuthStateChanged = (onChange: any) => {
   return getAuth(app).onAuthStateChanged(async (user) => {
@@ -115,10 +117,16 @@ export const onAuthStateChanged = (onChange: any) => {
       const userSnap = await getDoc(userRef);
 
       let likedTweets: string[] = [];
+      let sharedTweets: string[] = [];
 
       if (userSnap.exists()) likedTweets = userSnap.data().likedTweets || [];
+      if (userSnap.exists()) sharedTweets = userSnap.data().sharedTweets || [];
 
-      const normalizedUser = await mapUserFromFirebaseAuthToUser(user, likedTweets);
+      const normalizedUser = await mapUserFromFirebaseAuthToUser(
+        user,
+        likedTweets,
+        sharedTweets
+      );
       onChange(normalizedUser);
     } else {
       onChange(null);
@@ -193,9 +201,81 @@ export const addTweet = async ({
       sharedCount: 0,
       img,
     });
-    // console.log("Tweet añadido con éxito!");
   } catch (error) {
     // console.error("Error añadiendo el tweet: ", error);
+  }
+};
+
+export const retweet = async ({
+  avatar,
+  content,
+  userId,
+  userName,
+  img,
+  sharedId,
+}: {
+  avatar: string | null | undefined;
+  content: string | null | undefined;
+  userId: string;
+  userName: string | null | undefined;
+  img: string | null | undefined;
+  sharedId: string | undefined;
+}) => {
+  const tweetRef = collection(db, "tweets");
+  const userRef = doc(db, "users", userId);
+
+  try {
+    const userSnap = await getDoc(userRef);
+    const originalTweetSnap = await getDoc(doc(tweetRef, sharedId));
+
+    if (!userSnap.exists() || !originalTweetSnap.exists()) {
+      throw new Error("Tweet no encontrado");
+    }
+
+    const isRetweeted = userSnap.data()?.sharedTweets?.includes(sharedId);
+    const sharedCount = originalTweetSnap.data()?.sharedCount || 0;
+
+    if (isRetweeted) {
+      await updateDoc(userRef, {
+        sharedTweets: isRetweeted
+          ? arrayRemove(sharedId)
+          : arrayUnion(sharedId),
+      });
+
+      await updateDoc(originalTweetSnap.ref, {
+        sharedCount: isRetweeted ? sharedCount - 1 : sharedCount + 1,
+      });
+
+      const retweetQuery = query(
+        tweetRef,
+        where("userId", "==", userId),
+        where("sharedId", "==", sharedId)
+      );
+      const retweetSnap = await getDocs(retweetQuery);
+      retweetSnap.forEach((doc) => deleteDoc(doc.ref));
+    } else {
+      await addDoc(tweetRef, {
+        avatar,
+        content,
+        userId,
+        userName,
+        createdAt: serverTimestamp(),
+        likesCount: 0,
+        sharedCount: 0,
+        img,
+        sharedId,
+      });
+
+      await updateDoc(userRef, {
+        sharedTweets: arrayUnion(sharedId),
+      });
+
+      await updateDoc(originalTweetSnap.ref, {
+        sharedCount: sharedCount + 1,
+      });
+    }
+  } catch (error) {
+    throw new Error("Error al hacer retweet");
   }
 };
 
@@ -235,7 +315,7 @@ export const likeTweet = async ({
         usersLiked: isLiked ? arrayRemove(userId) : arrayUnion(userId),
       },
       { merge: true }
-    )
+    );
 
     await updateDoc(tweetRef, {
       likesCount: isLiked ? tweetLikesCount - 1 : tweetLikesCount + 1,
@@ -259,6 +339,12 @@ const mapTweetFromFirebaseToTweetObject = (doc: any) => {
   };
 };
 
+export const fetchTweetById = async (id: string) => {
+  const userRef = doc(db, "tweets", id);
+  const userSnap = await getDoc(userRef);
+  return mapTweetFromFirebaseToTweetObject(userSnap);
+};
+
 // Para actualizar en tiempo real con firebase
 // onSnapshot realiza una suscripcion en tiempo real a firebase, funciona en useEffect
 export const listenLatestTweets = (callback: any) => {
@@ -278,7 +364,6 @@ export const fetchLatestTweets = async () => {
     return snapshot.docs.map(mapTweetFromFirebaseToTweetObject);
   });
 };
-
 
 // Firebase STORAGE
 export const uploadImage = (file: File) => {

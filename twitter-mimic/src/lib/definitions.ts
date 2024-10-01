@@ -4,6 +4,7 @@ export interface User {
   displayName: string;
   uid: string;
   likedTweets: string[];
+  sharedTweets: string[];
 }
 
 export interface Timeline {
@@ -17,5 +18,22 @@ export interface Timeline {
   likesCount: number;
   sharedCount: number;
   createdAt: number;
+  usersLiked?: string[];
+  sharedId: string | undefined;
+}
+
+export interface SharedTweet {
+  id: string;
+  img: string;
+  userId: string;
+  userName: string;
+  sharedUserName: string;
+  avatar: string;
+  sharedAvatar: string;
+  content: string;
+  likesCount: number;
+  sharedCount: number;
+  createdAt: number;
+  sharedCreatedAt: number;
   usersLiked?: string[];
 }

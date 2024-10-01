@@ -5,9 +5,9 @@ import useTimeAgo from "../../../hooks/useTimeAgo";
 import { Avatar } from "./Avatar";
 import styles from "@/ui/styles/home.module.css";
 import Link from "next/link";
-import { MouseEventHandler, useState } from "react";
+import { MouseEventHandler, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Timeline, User } from "@/lib/definitions";
+import { SharedTweet, Timeline, User } from "@/lib/definitions";
 import { LikeIcon, LikeIconFilled } from "../icons/Like";
 import RetweetIcon from "../icons/Retweet";
 import ChainIcon from "../icons/LinkIcon";
@@ -16,10 +16,15 @@ import CommentIcon from "../icons/CommentIcon";
 import TweetMenu from "./TweetMenu";
 import useUser from "../../../hooks/useUser";
 import useLikeTweet from "../../../hooks/useLikeTweet";
-import { fetchUsersById } from "../../../firebase/client";
+import {
+  fetchTweetById,
+  fetchUsersById,
+  retweet,
+} from "../../../firebase/client";
 import UserListModal from "./UserListModal/UserListModal";
+import Retweet from "./Retweet";
 
-interface LikeModalState {
+export interface LikeModalState {
   id: string | undefined;
   usersLiked: User[];
 }
@@ -27,39 +32,91 @@ interface LikeModalState {
 export default function TweetClient({
   timeline,
   likedTweets,
+  sharedTweets,
 }: {
   timeline: Timeline[];
   likedTweets: string[];
+  sharedTweets: string[];
 }) {
   const [isMenuOpen, setIsMenuOpen] = useState<string | undefined>(undefined);
   const [likeModalState, setLikeModalState] = useState<LikeModalState>({
     id: undefined,
     usersLiked: [],
   });
+  const [retweets, setRetweets] = useState<SharedTweet[]>([]);
+
+  useEffect(() => {
+    const fetchRetweets = async () => {
+      const retweetsPromise = timeline
+        .filter((tweet) => tweet.sharedId)
+        .map(async (tweet) => {
+          const retweetData = await fetchTweetById(tweet.sharedId as string);
+          return retweetData;
+        });
+
+      const resolvedRetweets = await Promise.all(retweetsPromise);
+      setRetweets(resolvedRetweets);
+    };
+
+    if (timeline.some((tweet) => tweet.sharedId)) {
+      fetchRetweets();
+    }
+  }, [timeline]);
 
   return (
     <>
       {timeline.map((tweet) => {
-        return (
-          <Tweet
-            key={tweet.id}
-            id={tweet.id}
-            img={tweet.img}
-            userId={tweet.userId}
-            userName={tweet.userName}
-            avatar={tweet.avatar}
-            content={tweet.content}
-            likesCount={tweet.likesCount}
-            sharedCount={tweet.sharedCount}
-            createdAt={tweet.createdAt}
-            isMenuOpen={isMenuOpen}
-            setIsMenuOpen={setIsMenuOpen}
-            isLiked={likedTweets?.includes(tweet.id)}
-            usersLiked={tweet.usersLiked}
-            likeModalState={likeModalState}
-            setLikeModalState={setLikeModalState}
-          />
-        );
+        if (tweet.sharedId) {
+          const retweet = retweets.find((rt) => rt.id === tweet.sharedId);
+
+          if (retweet) {
+            return (
+              <Retweet
+                key={tweet.id}
+                id={retweet.id}
+                img={retweet.img}
+                userId={tweet.userId}
+                userName={tweet.userName}
+                sharedUserName={retweet.userName}
+                avatar={tweet.avatar}
+                sharedAvatar={retweet.avatar}
+                content={retweet.content}
+                likesCount={retweet.likesCount}
+                sharedCount={retweet.sharedCount}
+                createdAt={tweet.createdAt}
+                sharedCreatedAt={retweet.createdAt}
+                isLiked={likedTweets?.includes(retweet.id)}
+                isShared={sharedTweets?.includes(retweet.id)}
+                usersLiked={retweet.usersLiked}
+                likeModalState={likeModalState}
+                setLikeModalState={setLikeModalState}
+              />
+            );
+          }
+        } else {
+          return (
+            <Tweet
+              key={tweet.id}
+              id={tweet.id}
+              img={tweet.img}
+              userId={tweet.userId}
+              userName={tweet.userName}
+              avatar={tweet.avatar}
+              content={tweet.content}
+              likesCount={tweet.likesCount}
+              sharedCount={tweet.sharedCount}
+              createdAt={tweet.createdAt}
+              isMenuOpen={isMenuOpen}
+              setIsMenuOpen={setIsMenuOpen}
+              isLiked={likedTweets?.includes(tweet.id)}
+              isShared={sharedTweets?.includes(tweet.id)}
+              usersLiked={tweet.usersLiked}
+              likeModalState={likeModalState}
+              setLikeModalState={setLikeModalState}
+              sharedId={undefined}
+            />
+          );
+        }
       })}
     </>
   );
@@ -78,6 +135,7 @@ function Tweet({
   isMenuOpen,
   setIsMenuOpen,
   isLiked,
+  isShared,
   usersLiked,
   likeModalState,
   setLikeModalState,
@@ -85,6 +143,7 @@ function Tweet({
   isMenuOpen: string | undefined;
   setIsMenuOpen: React.Dispatch<React.SetStateAction<string | undefined>>;
   isLiked: boolean;
+  isShared: boolean;
   likeModalState: LikeModalState;
   setLikeModalState: React.Dispatch<React.SetStateAction<LikeModalState>>;
 }) {
@@ -137,6 +196,35 @@ function Tweet({
     }
   };
 
+  //RETWEET LOGIC START
+  // Crear un tweet normalmente con addTweet pero agregarle parametro default para retweet
+  const [sharedCountUi, setSharedCountUi] = useState(sharedCount);
+
+  const handleRetweet: MouseEventHandler<HTMLButtonElement> = async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (user) {
+      await retweet({
+        avatar: user?.avatar,
+        content: "",
+        userId: user.uid,
+        userName: user?.displayName,
+        img,
+        sharedId: id,
+      })
+        .then(() => {
+          setSharedCountUi((prev) => (isShared ? prev - 1 : prev + 1));
+        })
+        .catch(() => {
+          toast.error("Error al retwittear");
+          setSharedCountUi((prev) => (prev === 0 ? 0 : prev - 1));
+        });
+    }
+  };
+
+  //RETWEET LOGIC END
+
   return (
     <article key={id} className={styles.article} onClick={handleArticleClick}>
       <div className={styles.avatarDiv}>
@@ -153,7 +241,6 @@ function Tweet({
               </time>
             </Link>
           </div>
-
           {user && user.uid === userId && (
             <TweetMenu
               id={id}
@@ -181,10 +268,12 @@ function Tweet({
             <CommentIcon />
             <span>0</span>
           </button>
-          <button>
-            <RetweetIcon />
-            <span>{sharedCount}</span>
-          </button>
+          {user?.uid !== userId && (
+            <button onClick={handleRetweet}>
+              <RetweetIcon />
+              <span>{sharedCountUi}</span>
+            </button>
+          )}
           <button onClick={handleCopyTweetLink}>
             <ChainIcon />
           </button>

@@ -76,6 +76,7 @@ export default function HomePage({ children }: { children: React.ReactNode }) {
           <TweetClient
             timeline={timeline}
             likedTweets={user?.likedTweets || []}
+            sharedTweets={user?.sharedTweets || []}
           />
         </section>
       )}
