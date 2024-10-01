@@ -330,7 +330,8 @@ const mapTweetFromFirebaseToTweetObject = (doc: any) => {
   // Se recupera el id generado por firestore
   const id = doc.id;
   const { createdAt } = data;
-  const normalizedCreatedAt = +createdAt.toDate();
+  const normalizedCreatedAt = createdAt ? +createdAt.toDate() : null;
+
 
   return {
     ...data,

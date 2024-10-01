@@ -47,6 +47,7 @@ export default async function TweetPage({
       likesCount: data?.likesCount,
       sharedCount: data?.sharedCount,
       createdAt: normalizedCreatedAt,
+      sharedId: data?.sharedId,
     };
 
     return (

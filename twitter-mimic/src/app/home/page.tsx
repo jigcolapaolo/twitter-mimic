@@ -73,11 +73,7 @@ export default function HomePage({ children }: { children: React.ReactNode }) {
               <SyncLoader color="#78b2f7" />
             </div>
           )}
-          <TweetClient
-            timeline={timeline}
-            likedTweets={user?.likedTweets || []}
-            sharedTweets={user?.sharedTweets || []}
-          />
+          <TweetClient timeline={timeline} />
         </section>
       )}
 

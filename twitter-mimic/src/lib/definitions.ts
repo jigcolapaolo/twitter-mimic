@@ -37,3 +37,8 @@ export interface SharedTweet {
   sharedCreatedAt: number;
   usersLiked?: string[];
 }
+
+export interface LikeModalState {
+  id: string | undefined;
+  usersLiked: User[];
+}
