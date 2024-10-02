@@ -14,7 +14,12 @@ interface UseFiltersProps {
   setSelectedUser: (user: User | null) => void;
 }
 
-export default function useFilters({ timeline, userId, selectedUser, setSelectedUser }: UseFiltersProps) {
+export default function useFilters({
+  timeline,
+  userId,
+  selectedUser,
+  setSelectedUser,
+}: UseFiltersProps) {
   const [filter, setFilter] = useState(TWEET_FILTER.TOP);
 
   const handleChangeFilter = (e: ChangeEvent<HTMLInputElement>) => {
@@ -30,7 +35,9 @@ export default function useFilters({ timeline, userId, selectedUser, setSelected
     let tweets = [...timeline];
     switch (filter) {
       case TWEET_FILTER.TOP:
-        tweets.sort((a, b) => b.likesCount - a.likesCount);
+        tweets = tweets
+        .filter((tweet) => !tweet.sharedId)
+        .sort((a, b) => b.likesCount - a.likesCount)
         break;
       case TWEET_FILTER.RECENT:
         tweets.sort((a, b) => b.createdAt - a.createdAt);
@@ -42,11 +49,10 @@ export default function useFilters({ timeline, userId, selectedUser, setSelected
 
     if (selectedUser != null) {
       tweets = tweets.filter((tweet) => tweet.userId === selectedUser.uid);
-      return tweets
+      return tweets;
     } else {
       return tweets;
     }
-
   }, [filter, timeline, userId, selectedUser]);
 
   return {
@@ -54,5 +60,5 @@ export default function useFilters({ timeline, userId, selectedUser, setSelected
     setFilter,
     handleChangeFilter,
     filteredTweets,
-  }
+  };
 }

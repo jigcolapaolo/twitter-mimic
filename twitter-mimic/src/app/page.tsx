@@ -28,6 +28,9 @@ export default function Home() {
     <>
       <section className={styles.section}>
         <Image
+          priority
+          placeholder="blur"
+          blurDataURL="/TwitterMimicLogo.png"
           src={TwitterMimicLogo}
           alt="Twitter Mimic Logo"
           width={150}
