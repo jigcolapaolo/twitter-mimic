@@ -117,7 +117,6 @@ function Tweet({
   setLikeModalState,
 }: TweetProps) {
   const timeago = useTimeAgo(createdAt);
-  const sharedTimeago = useTimeAgo(sharedCreatedAt || Date.now());
   const router = useRouter();
   const user = useUser();
   const { loadingUsers, handleUserLike } = useUserLike({
@@ -175,7 +174,7 @@ function Tweet({
           </>
         )}
 
-        {isRetweet && sharedUserName && sharedAvatar && (
+        {isRetweet && sharedUserName && sharedAvatar && sharedCreatedAt && (
           <>
             <p style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
               <RetweetIcon />
@@ -188,7 +187,7 @@ function Tweet({
               sharedAvatar={sharedAvatar}
               sharedUserName={sharedUserName}
               content={content}
-              sharedTimeago={sharedTimeago}
+              sharedCreatedAt={sharedCreatedAt}
             />
           </>
         )}

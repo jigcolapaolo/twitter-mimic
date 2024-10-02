@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Avatar } from "./Avatar";
 import styles from "@/ui/styles/home.module.css";
 import Image from "next/image";
+import useTimeAgo from "../../../hooks/useTimeAgo";
 
 interface RetweetContentProps {
   id: string;
@@ -9,7 +10,7 @@ interface RetweetContentProps {
   sharedAvatar: string;
   sharedUserName: string;
   content: string;
-  sharedTimeago: string;
+  sharedCreatedAt: number;
 }
 
 export default function RetweetContent({
@@ -18,8 +19,9 @@ export default function RetweetContent({
   sharedAvatar,
   sharedUserName,
   content,
-  sharedTimeago,
+  sharedCreatedAt,
 }: RetweetContentProps) {
+  const sharedTimeago = useTimeAgo(sharedCreatedAt);
   return (
     <section
       style={{
