@@ -9,29 +9,33 @@ import { toast } from "sonner";
 import useRetweet from "../../../hooks/useRetweet";
 import { User } from "@/lib/definitions";
 import useLikeTweet from "../../../hooks/useLikeTweet";
+import { useRouter } from "next/navigation";
 
 interface TweetFooterProps {
   handleUserLike: MouseEventHandler;
-  isLiked: boolean;
   likesCount: number;
+  commentsCount: number;
+  isLiked: boolean;
+  isShared: boolean;
   userId: string;
   id: string;
   img: string;
-  isShared: boolean;
   sharedCount: number;
 }
 
 export default function TweetFooter({
   handleUserLike,
-  isLiked,
   likesCount,
+  commentsCount,
+  isLiked,
+  isShared,
   userId,
   id,
   img,
-  isShared,
   sharedCount,
 }: TweetFooterProps) {
   const user = useUser();
+  const router = useRouter();
   const { isTweetLiked, likesCountState, handleLikeTweet } = useLikeTweet(
     isLiked,
     likesCount,
@@ -39,13 +43,11 @@ export default function TweetFooter({
     user as User
   );
   const { isSharedUi, handleRetweet, sharedCountUi } = useRetweet({
-    user,
+    isShared,
     sharedCount,
     id,
     img,
-    isShared,
   });
-
 
 
   const handleCopyTweetLink: MouseEventHandler<HTMLButtonElement> = (e) => {
@@ -59,15 +61,22 @@ export default function TweetFooter({
     }, 2000);
   };
 
+  const handleCommentTweet: MouseEventHandler<HTMLButtonElement> = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    router.push(`/status/${id}`);
+    
+  }
+
   return (
     <footer className={styles.footer}>
       <button onClick={handleLikeTweet}>
         {isTweetLiked ? <LikeIconFilled /> : <LikeIcon />}
         <span onClick={handleUserLike}>{likesCountState}</span>
       </button>
-      <button>
+      <button onClick={handleCommentTweet}>
         <CommentIcon />
-        <span>0</span>
+        <span>{commentsCount}</span>
       </button>
       {user?.uid !== userId && (
         <button

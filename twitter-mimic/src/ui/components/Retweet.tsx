@@ -22,18 +22,19 @@ export default function Retweet({
   content,
   likesCount,
   sharedCount,
-  createdAt,
-  sharedCreatedAt,
   isLiked,
   isShared,
+  createdAt,
+  sharedCreatedAt,
   usersLiked,
+  usersComments,
   likeModalState,
   setLikeModalState,
 }: SharedTweet & {
-  isLiked: boolean;
-  isShared: boolean;
   likeModalState: LikeModalState;
   setLikeModalState: React.Dispatch<React.SetStateAction<LikeModalState>>;
+  isLiked: boolean;
+  isShared: boolean;
 }) {
   const timeago = useTimeAgo(createdAt);
   const sharedTimeago = useTimeAgo(sharedCreatedAt);
@@ -83,13 +84,14 @@ export default function Retweet({
 
         <TweetFooter
           handleUserLike={handleUserLike}
-          isLiked={isLiked}
           likesCount={likesCount}
+          commentsCount={usersComments?.length || 0}
+          isLiked={isLiked}
+          isShared={isShared}
           userId={userId}
           id={id}
           img={img}
           sharedCount={sharedCount}
-          isShared={isShared}
         />
         {(likeModalState.id === id || loadingUsers) && (
           <UserListModal

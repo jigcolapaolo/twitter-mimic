@@ -202,7 +202,7 @@ export const addTweet = async ({
       img,
     });
   } catch (error) {
-    // console.error("Error añadiendo el tweet: ", error);
+    throw new Error("Error al agregar el Tweet");
   }
 };
 
@@ -332,7 +332,6 @@ const mapTweetFromFirebaseToTweetObject = (doc: any) => {
   const { createdAt } = data;
   const normalizedCreatedAt = createdAt ? +createdAt.toDate() : null;
 
-
   return {
     ...data,
     id,
@@ -364,6 +363,77 @@ export const fetchLatestTweets = async () => {
     // Se mapean los docs de la db y se extraen los datos
     return snapshot.docs.map(mapTweetFromFirebaseToTweetObject);
   });
+};
+
+export const addComment = async ({
+  tweetId,
+  userId,
+  userName,
+  content,
+  avatar,
+}: {
+  tweetId: string;
+  userId: string;
+  userName: string;
+  content: string;
+  avatar: string;
+}) => {
+  // commentsId en el user, commentsId en el tweet, commentsCount en el tweet
+  try {
+    const commentRef = collection(db, "comments");
+    await addDoc(commentRef, {
+      tweetId,
+      userId,
+      userName,
+      content,
+      avatar,
+      createdAt: serverTimestamp(),
+    });
+  } catch (error) {
+    throw new Error("Error al agregar comentario");
+  }
+};
+
+// export const deleteComment = async ({
+//   tweetId,
+//   commentId,
+// }: {
+//   tweetId: string;
+//   commentId: string;
+// }) => {
+
+//   try {
+//     const commentRef = doc(db, "comments", commentId);
+//     await deleteDoc(commentRef);
+//   } catch (error) {
+//     throw new Error("Error al borrar comentario");
+//   }
+// };
+
+export const fetchLatestCommentsByTweetId = async (tweetId: string) => {
+  const commentRef = collection(db, "comments");
+  const queryComments = query(
+    commentRef,
+    where("tweetId", "==", tweetId),
+    orderBy("createdAt", "desc")
+  );
+  return await getDocs(queryComments).then((snapshot) => {
+    return snapshot.docs.map(mapCommentFromFirebaseToCommentObject);
+  });
+};
+
+const mapCommentFromFirebaseToCommentObject = (doc: any) => {
+  const data = doc.data();
+
+  const id = doc.id;
+  const { createdAt } = data;
+  const normalizedCreatedAt = createdAt ? +createdAt.toDate() : null;
+
+  return {
+    ...data,
+    id,
+    createdAt: normalizedCreatedAt,
+  };
 };
 
 // Firebase STORAGE

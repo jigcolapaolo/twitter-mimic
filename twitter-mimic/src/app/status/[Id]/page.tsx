@@ -37,7 +37,7 @@ export default async function TweetPage({
     const createdAt = data?.createdAt;
     const normalizedCreatedAt = +createdAt.toDate();
 
-    const props = {
+    const props: Timeline = {
       id: id,
       content: data?.content,
       img: data?.img,
@@ -48,6 +48,8 @@ export default async function TweetPage({
       sharedCount: data?.sharedCount,
       createdAt: normalizedCreatedAt,
       sharedId: data?.sharedId,
+      usersLiked: data?.usersLiked,
+      usersComments: data?.usersComments,
     };
 
     return (
@@ -56,7 +58,7 @@ export default async function TweetPage({
           <ArrowLeft width={35} height={35} className={composeStyles.svg} />
         </Link>
         <div>
-          <TweetClient timeline={[props]} />
+          <TweetClient singleTimeline={[props]} />
         </div>
       </>
     );

@@ -14,12 +14,12 @@ export interface Timeline {
   avatar: string;
   userName: string;
   content: string;
-  name?: string;
   likesCount: number;
   sharedCount: number;
   createdAt: number;
   usersLiked?: string[];
   sharedId: string | undefined;
+  usersComments?: string[];
 }
 
 export interface SharedTweet {
@@ -36,9 +36,20 @@ export interface SharedTweet {
   createdAt: number;
   sharedCreatedAt: number;
   usersLiked?: string[];
+  usersComments?: string[];
 }
 
 export interface LikeModalState {
   id: string | undefined;
   usersLiked: User[];
+}
+
+export interface Comment {
+  id: string;
+  content: string;
+  tweetId: string;
+  userId: string;
+  userName: string;
+  avatar: string;
+  createdAt: number;
 }

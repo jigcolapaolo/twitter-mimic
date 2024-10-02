@@ -8,15 +8,13 @@ import { Timeline } from "@/lib/definitions";
 import { SyncLoader } from "react-spinners";
 import TweetClient from "@/ui/components/Tweet";
 
-import HomePage from "../home/page";
+import HomeLayout from "../home/layout";
 import SearchFilters from "@/ui/components/app/search/SearchFilters";
 
 export default function SearchPage() {
-
   const [timeline, setTimeline] = useState<Timeline[]>([]);
   const [filteredTweets, setFilteredTweets] = useState<Timeline[]>(timeline);
   const user = useUser();
-
 
   useEffect(() => {
     if (!user) return;
@@ -32,21 +30,22 @@ export default function SearchPage() {
     setFilteredTweets(timeline);
   }, [timeline]);
 
-
   return (
-    <HomePage>
+    <HomeLayout>
       <section className={styles.section}>
-        <SearchFilters timeline={timeline} onFilterChange={setFilteredTweets} userId={user?.uid} />
-        {timeline.length === 0 && (
+        <SearchFilters
+          timeline={timeline}
+          onFilterChange={setFilteredTweets}
+          userId={user?.uid}
+        />
+        {filteredTweets.length === 0 ? (
           <div className="flex items-center justify-center h-full w-full">
             <SyncLoader color="#78b2f7" />
           </div>
+        ) : (
+          <TweetClient timeline={filteredTweets} />
         )}
-        <TweetClient
-          timeline={filteredTweets}
-          likedTweets={user?.likedTweets || []}
-        />
       </section>
-    </HomePage>
+    </HomeLayout>
   );
 }

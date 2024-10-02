@@ -48,6 +48,9 @@ export default function RetweetContent({
 
       {img && (
         <Image
+          priority
+          placeholder="blur"
+          blurDataURL={img}
           className={styles.img}
           width={300}
           height={300}

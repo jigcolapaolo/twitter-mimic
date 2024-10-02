@@ -1,5 +1,5 @@
 import { User } from "@/lib/definitions";
-import { MouseEventHandler, useState } from "react";
+import { MouseEventHandler, useEffect, useState } from "react";
 import { likeTweet } from "../firebase/client";
 import { toast } from "sonner";
 
@@ -11,6 +11,13 @@ export default function useLikeTweet(
 ) {
   const [isTweetLiked, setIsTweetLiked] = useState<boolean>(isLiked);
   const [likesCountState, setLikesCountState] = useState<number>(likesCount);
+
+  useEffect(() => {
+    if (user?.likedTweets) {
+      setIsTweetLiked(user.likedTweets.includes(id));
+    }
+  }, [user?.likedTweets, id]);
+  
 
   const handleLikeTweet: MouseEventHandler<HTMLButtonElement> = async (e) => {
     e.preventDefault();
