@@ -8,35 +8,38 @@ export interface User {
 }
 
 export interface Timeline {
-  userId: string;
   id: string;
   img: string;
   avatar: string;
   userName: string;
+  userId: string;
   content: string;
   likesCount: number;
   sharedCount: number;
   createdAt: number;
   usersLiked?: string[];
-  sharedId: string | undefined;
   usersComments?: string[];
+  sharedUserName: string | undefined;
+  sharedAvatar: string | undefined;
+  sharedCreatedAt: number | undefined;
+  sharedId: string | undefined;
 }
 
-export interface SharedTweet {
+export interface SharedTweets {
   id: string;
   img: string;
-  userId: string;
-  userName: string;
-  sharedUserName: string;
   avatar: string;
-  sharedAvatar: string;
+  userName: string;
+  userId: string;
   content: string;
   likesCount: number;
   sharedCount: number;
   createdAt: number;
-  sharedCreatedAt: number;
   usersLiked?: string[];
   usersComments?: string[];
+  sharedUserName: string;
+  sharedAvatar: string;
+  sharedCreatedAt: number;
 }
 
 export interface LikeModalState {

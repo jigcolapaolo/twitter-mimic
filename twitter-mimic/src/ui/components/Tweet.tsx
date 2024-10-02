@@ -11,10 +11,12 @@ import { LikeModalState, Timeline } from "@/lib/definitions";
 import TweetMenu from "./TweetMenu";
 import useUser from "../../../hooks/useUser";
 import UserListModal from "./UserListModal/UserListModal";
-import Retweet from "./Retweet";
 import useUserLike from "../../../hooks/useUserLike";
 import TweetFooter from "./TweetFooter";
 import useTimeline from "../../../hooks/useTimeline";
+import RetweetIcon from "../icons/Retweet";
+import RetweetContent from "./RetweetContent";
+import { SyncLoader } from "react-spinners";
 
 export default function TweetClient({
   singleTimeline,
@@ -22,7 +24,7 @@ export default function TweetClient({
   singleTimeline?: Timeline[];
 }) {
   const user = useUser();
-  const { timeline, retweets } = useTimeline({ singleTimeline, user });
+  const { timeline, retweets, loading } = useTimeline({ singleTimeline, user });
 
   const [isMenuOpen, setIsMenuOpen] = useState<string | undefined>(undefined);
   const [likeModalState, setLikeModalState] = useState<LikeModalState>({
@@ -32,92 +34,87 @@ export default function TweetClient({
 
   return (
     <>
-      {timeline.map((tweet) => {
-        if (tweet.sharedId) {
+      {loading ? (
+        <div className="flex justify-center items-center h-full">
+          <SyncLoader color="#3498db" loading={loading} />
+        </div>
+      ) : (
+        timeline.map((tweet) => {
           const retweet = retweets.find((rt) => rt.id === tweet.sharedId);
 
-          if (retweet) {
-            return (
-              <Retweet
-                key={tweet.id}
-                id={retweet.id}
-                img={retweet.img}
-                userId={retweet.userId}
-                userName={tweet.userName}
-                sharedUserName={retweet.userName}
-                avatar={tweet.avatar}
-                sharedAvatar={retweet.avatar}
-                content={retweet.content}
-                likesCount={retweet.likesCount}
-                sharedCount={retweet.sharedCount}
-                isLiked={!!user?.likedTweets?.includes(retweet.id)}
-                isShared={!!user?.sharedTweets?.includes(retweet.id)}
-                createdAt={tweet.createdAt}
-                sharedCreatedAt={retweet.createdAt}
-                usersLiked={retweet.usersLiked}
-                usersComments={retweet.usersComments}
-                likeModalState={likeModalState}
-                setLikeModalState={setLikeModalState}
-              />
-            );
-          }
-        } else {
           return (
             <Tweet
               key={tweet.id}
-              id={tweet.id}
-              img={tweet.img}
-              userId={tweet.userId}
+              id={retweet ? retweet.id : tweet.id}
+              img={retweet ? retweet.img : tweet.img}
+              userId={retweet ? retweet.userId : tweet.userId}
               userName={tweet.userName}
               avatar={tweet.avatar}
-              content={tweet.content}
-              likesCount={tweet.likesCount}
-              sharedCount={tweet.sharedCount}
-              isLiked={!!user?.likedTweets?.includes(tweet.id)}
-              isShared={!!user?.sharedTweets?.includes(tweet.id)}
+              content={retweet ? retweet.content : tweet.content}
+              likesCount={retweet ? retweet.likesCount : tweet.likesCount}
+              sharedCount={retweet ? retweet.sharedCount : tweet.sharedCount}
+              isLiked={
+                !!user?.likedTweets?.includes(retweet ? retweet.id : tweet.id)
+              }
+              isShared={
+                !!user?.sharedTweets?.includes(retweet ? retweet.id : tweet.id)
+              }
               createdAt={tweet.createdAt}
-              isMenuOpen={isMenuOpen}
-              setIsMenuOpen={setIsMenuOpen}
-              usersLiked={tweet.usersLiked}
-              usersComments={tweet.usersComments}
+              usersLiked={retweet ? retweet.usersLiked : tweet.usersLiked}
+              usersComments={
+                retweet ? retweet.usersComments : tweet.usersComments
+              }
+              sharedUserName={retweet ? retweet.userName : undefined}
+              sharedAvatar={retweet ? retweet.avatar : undefined}
+              sharedCreatedAt={retweet ? retweet.createdAt : undefined}
+              isRetweet={!!retweet}
               likeModalState={likeModalState}
               setLikeModalState={setLikeModalState}
-              sharedId={undefined}
+              isMenuOpen={isMenuOpen}
+              setIsMenuOpen={setIsMenuOpen}
             />
           );
-        }
-      })}
+        })
+      )}
     </>
   );
 }
 
+interface TweetProps extends Omit<Timeline, "sharedId"> {
+  isLiked: boolean;
+  isShared: boolean;
+  isRetweet?: boolean;
+  isMenuOpen: string | undefined;
+  setIsMenuOpen: React.Dispatch<React.SetStateAction<string | undefined>>;
+  likeModalState: LikeModalState;
+  setLikeModalState: React.Dispatch<React.SetStateAction<LikeModalState>>;
+}
+
 function Tweet({
-  avatar,
-  userName,
-  content,
   id,
   img,
   userId,
-  createdAt,
+  userName,
+  avatar,
+  content,
   likesCount,
   sharedCount,
   isLiked,
   isShared,
+  createdAt,
   isMenuOpen,
   setIsMenuOpen,
   usersLiked,
   usersComments,
+  sharedUserName,
+  sharedAvatar,
+  sharedCreatedAt,
+  isRetweet,
   likeModalState,
   setLikeModalState,
-}: Timeline & {
-  isMenuOpen: string | undefined;
-  setIsMenuOpen: React.Dispatch<React.SetStateAction<string | undefined>>;
-  isLiked: boolean;
-  isShared: boolean;
-  likeModalState: LikeModalState;
-  setLikeModalState: React.Dispatch<React.SetStateAction<LikeModalState>>;
-}) {
+}: TweetProps) {
   const timeago = useTimeAgo(createdAt);
+  const sharedTimeago = useTimeAgo(sharedCreatedAt || Date.now());
   const router = useRouter();
   const user = useUser();
   const { loadingUsers, handleUserLike } = useUserLike({
@@ -156,19 +153,43 @@ function Tweet({
             />
           )}
         </header>
-        <p className={styles.p}>{content}</p>
-        {img && (
-          <Image
-            priority
-            placeholder="blur"
-            blurDataURL={img}
-            className={styles.img}
-            width={300}
-            height={300}
-            src={img}
-            alt="Tweet Image"
-          />
+
+        {!isRetweet && (
+          <>
+            <p className={styles.p}>{content}</p>
+            {img && (
+              <Image
+                priority
+                placeholder="blur"
+                blurDataURL={img}
+                className={styles.img}
+                width={300}
+                height={300}
+                src={img}
+                alt="Tweet Image"
+              />
+            )}
+          </>
         )}
+
+        {isRetweet && sharedUserName && sharedAvatar && (
+          <>
+            <p style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+              <RetweetIcon />
+              ha compartido un tweet de <strong>{sharedUserName}</strong>
+            </p>
+
+            <RetweetContent
+              id={id}
+              img={img}
+              sharedAvatar={sharedAvatar}
+              sharedUserName={sharedUserName}
+              content={content}
+              sharedTimeago={sharedTimeago}
+            />
+          </>
+        )}
+
         <TweetFooter
           handleUserLike={handleUserLike}
           likesCount={likesCount}
