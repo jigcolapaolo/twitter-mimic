@@ -1,4 +1,4 @@
-import { SharedTweets, Timeline, User } from "@/lib/definitions";
+import { SharedTweet, Timeline, User } from "@/lib/definitions";
 import { useEffect, useState } from "react";
 import { fetchTweetById, listenLatestTweets } from "../firebase/client";
 
@@ -12,7 +12,7 @@ export default function useTimeline({
   user,
 }: UseTimelineProps) {
   const [timeline, setTimeline] = useState<Timeline[]>(singleTimeline || []);
-  const [retweets, setRetweets] = useState<SharedTweets[]>([]);
+  const [retweets, setRetweets] = useState<SharedTweet[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

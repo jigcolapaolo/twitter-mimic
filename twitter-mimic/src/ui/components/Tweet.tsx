@@ -81,6 +81,9 @@ export default function TweetClient({
 }
 
 interface TweetProps extends Omit<Timeline, "sharedId"> {
+  sharedUserName: string | undefined;
+  sharedAvatar: string | undefined;
+  sharedCreatedAt: number | undefined;
   isLiked: boolean;
   isShared: boolean;
   isRetweet?: boolean;

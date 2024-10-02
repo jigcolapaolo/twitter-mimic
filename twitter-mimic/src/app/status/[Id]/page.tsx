@@ -37,7 +37,7 @@ export default async function TweetPage({
     const createdAt = data?.createdAt;
     const normalizedCreatedAt = +createdAt.toDate();
 
-    const props = {
+    const props: Timeline = {
       id: id,
       content: data?.content,
       img: data?.img,

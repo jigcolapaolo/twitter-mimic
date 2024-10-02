@@ -19,27 +19,11 @@ export interface Timeline {
   createdAt: number;
   usersLiked?: string[];
   usersComments?: string[];
-  sharedUserName: string | undefined;
-  sharedAvatar: string | undefined;
-  sharedCreatedAt: number | undefined;
   sharedId: string | undefined;
 }
 
-export interface SharedTweets {
-  id: string;
-  img: string;
-  avatar: string;
-  userName: string;
-  userId: string;
-  content: string;
-  likesCount: number;
-  sharedCount: number;
-  createdAt: number;
-  usersLiked?: string[];
-  usersComments?: string[];
-  sharedUserName: string;
-  sharedAvatar: string;
-  sharedCreatedAt: number;
+export interface SharedTweet extends Omit<Timeline, "sharedId"> {
+
 }
 
 export interface LikeModalState {
