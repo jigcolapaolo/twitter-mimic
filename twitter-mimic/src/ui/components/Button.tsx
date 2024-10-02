@@ -1,9 +1,11 @@
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
   className?: string;
+  rest?: React.ButtonHTMLAttributes<HTMLButtonElement>
 }
 
 export function Button({ children, className = "", ...rest }: ButtonProps) {
+  
   return (
     <button
       className={`flex h-9 items-center justify-center rounded-full bg-blue-500 
@@ -13,6 +15,7 @@ export function Button({ children, className = "", ...rest }: ButtonProps) {
           active:bg-blue-600 aria-disabled:cursor-not-allowed aria-disabled:opacity-50
          ${className}`}
       {...rest}
+
     >
       {children}
     </button>

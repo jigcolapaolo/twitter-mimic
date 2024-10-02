@@ -25,7 +25,7 @@ export default function TweetClient({
 }) {
   const user = useUser();
   const { timeline, retweets, loading } = useTimeline({ singleTimeline, user });
-
+  
   const [isMenuOpen, setIsMenuOpen] = useState<string | undefined>(undefined);
   const [likeModalState, setLikeModalState] = useState<LikeModalState>({
     id: undefined,

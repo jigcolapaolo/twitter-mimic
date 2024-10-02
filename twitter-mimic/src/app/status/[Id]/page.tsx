@@ -7,6 +7,7 @@ import { Timeline } from "@/lib/definitions";
 import ArrowLeft from "@/ui/icons/ArrowLeft";
 import composeStyles from "@/ui/styles/composeTweet.module.css";
 import { SadEmojiIcon } from "@/ui/icons/Emojis";
+import ReturnButton from "@/ui/components/ReturnButton";
 
 interface TweetPageProps {
   Id: string;
@@ -52,11 +53,15 @@ export default async function TweetPage({
       usersComments: data?.usersComments,
     };
 
+
     return (
       <>
-        <Link href={"/home"} className={composeStyles.svgButton}>
+      <ReturnButton className={composeStyles.svgButton}>
+        <ArrowLeft width={35} height={35} className={composeStyles.svg} />
+      </ReturnButton>
+        {/* <Link href={"/home"} className={composeStyles.svgButton}>
           <ArrowLeft width={35} height={35} className={composeStyles.svg} />
-        </Link>
+        </Link> */}
         <div>
           <TweetClient singleTimeline={[props]} />
         </div>
@@ -69,7 +74,7 @@ export default async function TweetPage({
           Tweet no encontrado <SadEmojiIcon width={50} height={50} />
         </p>
 
-        <Link href="/home">
+        <Link href={"/home"}>
           <Button>Volver a Home</Button>
         </Link>
       </section>

@@ -11,12 +11,18 @@ export default function useTimeline({
   singleTimeline,
   user,
 }: UseTimelineProps) {
-  const [timeline, setTimeline] = useState<Timeline[]>(singleTimeline || []);
+  const [timeline, setTimeline] = useState<Timeline[]>([]);
   const [retweets, setRetweets] = useState<SharedTweet[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!user || singleTimeline) return;
+    if (!user) return;
+
+    if (singleTimeline) {
+      setTimeline(singleTimeline);
+      setLoading(false);
+      return;
+    }
 
     setLoading(true);
     const unsubscribe: any = listenLatestTweets((newTweets: any) => {

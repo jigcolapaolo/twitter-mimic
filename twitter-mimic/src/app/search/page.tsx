@@ -1,8 +1,7 @@
 "use client";
 
 import styles from "@/ui/styles/search.module.css";
-import { useEffect, useState } from "react";
-import { listenLatestTweets } from "../../../firebase/client";
+import { useState } from "react";
 import useUser from "../../../hooks/useUser";
 import { Timeline } from "@/lib/definitions";
 import { SyncLoader } from "react-spinners";
@@ -10,25 +9,12 @@ import TweetClient from "@/ui/components/Tweet";
 
 import HomeLayout from "../home/layout";
 import SearchFilters from "@/ui/components/app/search/SearchFilters";
+import useTimeline from "../../../hooks/useTimeline";
 
 export default function SearchPage() {
-  const [timeline, setTimeline] = useState<Timeline[]>([]);
-  const [filteredTweets, setFilteredTweets] = useState<Timeline[]>(timeline);
   const user = useUser();
-
-  useEffect(() => {
-    if (!user) return;
-
-    const unsubscribe: any = listenLatestTweets((newTweets: any) => {
-      setTimeline(newTweets);
-    });
-
-    return () => unsubscribe();
-  }, [user]);
-
-  useEffect(() => {
-    setFilteredTweets(timeline);
-  }, [timeline]);
+  const { timeline, loading } = useTimeline({ user })
+  const [filteredTweets, setFilteredTweets] = useState<Timeline[]>(timeline);
 
   return (
     <HomeLayout>
@@ -38,12 +24,12 @@ export default function SearchPage() {
           onFilterChange={setFilteredTweets}
           userId={user?.uid}
         />
-        {filteredTweets.length === 0 ? (
+        {loading ? (
           <div className="flex items-center justify-center h-full w-full">
             <SyncLoader color="#78b2f7" />
           </div>
         ) : (
-          <TweetClient timeline={filteredTweets} />
+          <TweetClient singleTimeline={filteredTweets} />
         )}
       </section>
     </HomeLayout>
