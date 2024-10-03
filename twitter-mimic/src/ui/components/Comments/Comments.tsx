@@ -1,11 +1,6 @@
 "use client";
 
-import { Comment } from "@/lib/definitions";
-import { MouseEventHandler, useEffect, useState } from "react";
-import {
-  addComment,
-  fetchLatestTweetComments,
-} from "../../../../firebase/client";
+import { MouseEventHandler } from "react";
 import { SyncLoader } from "react-spinners";
 import { Button } from "../Button";
 import styles from "./comments.module.css";
@@ -18,46 +13,28 @@ import { toast } from "sonner";
 import { Avatar } from "../Avatar";
 import useTimeAgo from "../../../../hooks/useTimeAgo";
 import CharacterLimit from "../composeTweet/CharacterLimit/CharacterLimit";
+import useComment from "../../../../hooks/useComment";
 
 export default function Comments({ tweetId }: { tweetId: string }) {
-  const [comments, setComments] = useState<Comment[]>([]);
-  const [loading, setLoading] = useState(false);
   const { message, isButtonDisabled, setMessage, setStatus, handleChange } =
     useTextChange();
+  const { comments, addNewComment, loading } = useComment({ tweetId });
   const user = useUser();
 
-  useEffect(() => {
-    if (!tweetId) return;
-    setLoading(true);
-
-    fetchLatestTweetComments(tweetId).then((comments) => {
-      setComments(comments);
-      setLoading(false);
-    });
-  }, [tweetId]);
-
-  const handleAddComment: MouseEventHandler<HTMLButtonElement> = (e) => {
+  const handleAddComment: MouseEventHandler<HTMLButtonElement> = async (e) => {
     e.preventDefault();
 
     if (!message || message.length === 0 || !user) return;
 
     setStatus(TEXT_STATES.LOADING);
-    addComment({
-      tweetId,
-      userId: user.uid,
-      userName: user.displayName,
-      content: message,
-      avatar: user.avatar,
-    })
+    await addNewComment({ message, user })
       .then(() => {
-        fetchLatestTweetComments(tweetId).then((updatedComments) => {
-          setComments(updatedComments);
-        });
         setMessage("");
-        setStatus(TEXT_STATES.NONE);
       })
       .catch(() => {
         toast.error("Error al agregar el comentario");
+      })
+      .finally(() => {
         setStatus(TEXT_STATES.NONE);
       });
   };
@@ -94,7 +71,9 @@ export default function Comments({ tweetId }: { tweetId: string }) {
                 <span className="text-gray-400"> · </span>
                 <TimeAgo createdAt={comment.createdAt} />
               </div>
-              <p className={`text-gray-500 ${styles.commentText}`}>{comment.content}</p>
+              <p className={`text-gray-500 ${styles.commentText}`}>
+                {comment.content}
+              </p>
             </div>
           </article>
         ))
