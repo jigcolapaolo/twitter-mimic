@@ -405,21 +405,32 @@ export const addComment = async ({
   }
 };
 
-// export const deleteComment = async ({
-//   tweetId,
-//   commentId,
-// }: {
-//   tweetId: string;
-//   commentId: string;
-// }) => {
+export const deleteComment = async ({
+  tweetId,
+  commentId,
+  userId
+}: {
+  tweetId: string;
+  commentId: string;
+  userId: string
+}) => {
 
-//   try {
-//     const commentRef = doc(db, "comments", commentId);
-//     await deleteDoc(commentRef);
-//   } catch (error) {
-//     throw new Error("Error al borrar comentario");
-//   }
-// };
+  try {
+    const commentRef = doc(db, "comments", commentId);
+    await deleteDoc(commentRef);
+
+    await updateDoc(doc(db, "tweets", tweetId), {
+      usersComments: arrayRemove(commentId),
+    })
+
+    await updateDoc(doc(db, "users", userId), {
+      comments: arrayRemove(commentId),
+    })
+
+  } catch (error) {
+    throw new Error("Error al borrar comentario");
+  }
+};
 
 export const fetchLatestTweetComments = async (tweetId: string) => {
   try {

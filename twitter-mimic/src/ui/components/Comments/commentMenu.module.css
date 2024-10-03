@@ -1,0 +1,40 @@
+.commentMenuDiv {
+    position: relative;
+  }
+  
+  .commentMenuDiv > div {
+    position: absolute;
+    right: 0;
+    padding: 0.5rem;
+    width: 11rem;
+    background-color: #475569;
+    border-radius: 0.375rem;
+    transition: opacity 0.2s ease-in-out;
+    z-index: 50;
+  }
+  
+  .commentMenuDiv > div button {
+    display: flex;
+    gap: 1rem;
+    color: white;
+    transition: color 0.2s ease-in-out;
+    font-family: system-ui;
+    font-weight: 500;
+  }
+  
+  .commentMenuDiv > div button:hover {
+    color: var(--primary-color-alt);
+  }
+  
+  .commentMenuDiv > div button:nth-child(2):hover {
+    color: rgb(255, 0, 0);
+  }
+
+  .opacityOpen {
+    opacity: 1;
+  }
+  
+  .opacityClosed {
+    opacity: 0;
+    pointer-events: none;
+  }

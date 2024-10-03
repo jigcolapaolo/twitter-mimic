@@ -1,6 +1,6 @@
 "use client";
 
-import { MouseEventHandler } from "react";
+import { MouseEventHandler, useState } from "react";
 import { SyncLoader } from "react-spinners";
 import { Button } from "../Button";
 import styles from "./comments.module.css";
@@ -14,11 +14,16 @@ import { Avatar } from "../Avatar";
 import useTimeAgo from "../../../../hooks/useTimeAgo";
 import CharacterLimit from "../composeTweet/CharacterLimit/CharacterLimit";
 import useComment from "../../../../hooks/useComment";
+import CommentMenu from "./CommentMenu";
 
 export default function Comments({ tweetId }: { tweetId: string }) {
+  const [isMenuOpen, setIsMenuOpen] = useState<string | undefined>(undefined);
+
   const { message, isButtonDisabled, setMessage, setStatus, handleChange } =
     useTextChange();
-  const { comments, addNewComment, loading } = useComment({ tweetId });
+  const { comments, loading, addNewComment, deleteUserComment } = useComment({
+    tweetId,
+  });
   const user = useUser();
 
   const handleAddComment: MouseEventHandler<HTMLButtonElement> = async (e) => {
@@ -74,6 +79,15 @@ export default function Comments({ tweetId }: { tweetId: string }) {
               <p className={`text-gray-500 ${styles.commentText}`}>
                 {comment.content}
               </p>
+            </div>
+            <div className={styles.commentMenu}>
+              <CommentMenu
+                id={comment.id}
+                userId={user?.uid}
+                isMenuOpen={isMenuOpen}
+                setIsMenuOpen={setIsMenuOpen}
+                deleteUserComment={deleteUserComment}
+              />
             </div>
           </article>
         ))

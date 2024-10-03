@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { addComment, fetchLatestTweetComments } from "../firebase/client";
+import { addComment, deleteComment, fetchLatestTweetComments } from "../firebase/client";
 import { Comment, User } from "@/lib/definitions";
 
-export default function useComment({ tweetId }: { tweetId: string }) {
+export default function useComment({ tweetId }: { tweetId: string | undefined }) {
   const [comments, setComments] = useState<Comment[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -40,9 +40,23 @@ export default function useComment({ tweetId }: { tweetId: string }) {
     }
   };
 
+  const deleteUserComment = async ({ commentId, userId }: { commentId: string; userId: string }) => {
+    if (!tweetId) return;
+
+    try {
+        await deleteComment({ tweetId, commentId, userId });
+
+        const updatedComments = await fetchLatestTweetComments(tweetId);
+        setComments(updatedComments);
+    } catch (error) {
+        
+    }
+  }
+
   return {
     comments,
-    addNewComment,
     loading,
+    addNewComment,
+    deleteUserComment,
   };
 }

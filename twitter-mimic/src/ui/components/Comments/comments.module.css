@@ -69,12 +69,16 @@
 .commentInfo {
   display: flex;
   flex-direction: column;
-  width: 92%;
+  width: 84%;
 }
 
 .commentText {
     overflow: hidden;
     word-break: break-word;
+}
+
+.commentMenu {
+    width: 8%;
 }
 
 .noComments {
