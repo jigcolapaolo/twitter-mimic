@@ -5,6 +5,7 @@ export interface User {
   uid: string;
   likedTweets: string[];
   sharedTweets: string[];
+  comments: string[]
 }
 
 export interface Timeline {

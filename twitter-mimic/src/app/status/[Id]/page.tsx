@@ -8,6 +8,7 @@ import ArrowLeft from "@/ui/icons/ArrowLeft";
 import composeStyles from "@/ui/styles/composeTweet.module.css";
 import { SadEmojiIcon } from "@/ui/icons/Emojis";
 import ReturnButton from "@/ui/components/ReturnButton";
+import Comments from "@/ui/components/Comments/Comments";
 
 interface TweetPageProps {
   Id: string;
@@ -53,18 +54,15 @@ export default async function TweetPage({
       usersComments: data?.usersComments,
     };
 
-
     return (
       <>
-      <ReturnButton className={composeStyles.svgButton}>
-        <ArrowLeft width={35} height={35} className={composeStyles.svg} />
-      </ReturnButton>
-        {/* <Link href={"/home"} className={composeStyles.svgButton}>
+        <ReturnButton className={composeStyles.svgButton}>
           <ArrowLeft width={35} height={35} className={composeStyles.svg} />
-        </Link> */}
+        </ReturnButton>
         <div>
           <TweetClient singleTimeline={[props]} />
         </div>
+        <Comments tweetId={props.id} />
       </>
     );
   } catch (error) {

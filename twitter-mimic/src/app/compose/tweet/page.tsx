@@ -3,7 +3,7 @@
 import { Button } from "@/ui/components/Button";
 import styles from "@/ui/styles/composeTweet.module.css";
 import useUser from "../../../../hooks/useUser";
-import { ChangeEvent, FormEvent, useState } from "react";
+import { FormEvent } from "react";
 import { addTweet } from "../../../../firebase/client";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
@@ -15,21 +15,14 @@ import useUploadImg, {
 } from "../../../../hooks/useUploadImg";
 import ImgLoadingMsg from "@/ui/components/composeTweet/ImgLoadingMsg/ImgLoadingMsg";
 import CharacterLimit from "@/ui/components/composeTweet/CharacterLimit/CharacterLimit";
+import useTextChange, { MAX_CHARS, TEXT_STATES } from "../../../../hooks/useTextChange";
 
-const COMPOSE_STATES = {
-  USER_NOT_KNOWN: 0,
-  LOADING: 1,
-  SUCCESS: 2,
-  ERROR: -1,
-};
 
-const MAX_CHARS = 280;
 
 export default function ComposeTweet() {
   const { push } = useRouter();
-  const [message, setMessage] = useState<string>();
-  const [status, setStatus] = useState<number>(COMPOSE_STATES.USER_NOT_KNOWN);
 
+  const { message, handleChange, isButtonDisabled, setStatus } = useTextChange();
   const user = useUser();
   const {
     drag,
@@ -41,15 +34,10 @@ export default function ComposeTweet() {
     handleDrop,
   } = useUploadImg();
 
-  const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
-    const { value } = e.target;
-
-    if (value.length <= MAX_CHARS) setMessage(value);
-  };
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setStatus(COMPOSE_STATES.LOADING);
+    setStatus(TEXT_STATES.LOADING);
     addTweet({
       avatar: user?.avatar,
       content: message,
@@ -61,12 +49,10 @@ export default function ComposeTweet() {
         push("/home");
       })
       .catch(() => {
-        setStatus(COMPOSE_STATES.ERROR);
+        setStatus(TEXT_STATES.ERROR);
       });
   };
 
-  const isButtonDisabled =
-    !message || message.length === 0 || status === COMPOSE_STATES.LOADING;
 
   return (
     <>

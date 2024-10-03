@@ -69,6 +69,7 @@ const mapUserFromFirebaseAuthToUser = async (
     uid,
     likedTweets,
     sharedTweets,
+    comments: [],
   };
 };
 
@@ -82,6 +83,7 @@ const mapUserFromFirebaseToUser = (doc: any): User => {
     email: "",
     likedTweets: [],
     sharedTweets: [],
+    comments: [],
   };
 };
 
@@ -378,10 +380,9 @@ export const addComment = async ({
   content: string;
   avatar: string;
 }) => {
-  // commentsId en el user, commentsId en el tweet, commentsCount en el tweet
   try {
     const commentRef = collection(db, "comments");
-    await addDoc(commentRef, {
+    const newComment = await addDoc(commentRef, {
       tweetId,
       userId,
       userName,
@@ -389,6 +390,16 @@ export const addComment = async ({
       avatar,
       createdAt: serverTimestamp(),
     });
+
+    const commentId = newComment.id;
+    await updateDoc(doc(db, "tweets", tweetId), {
+      usersComments: arrayUnion(commentId),
+    })
+
+    await updateDoc(doc(db, "users", userId), {
+      comments: arrayUnion(commentId),
+    })
+
   } catch (error) {
     throw new Error("Error al agregar comentario");
   }
@@ -410,16 +421,21 @@ export const addComment = async ({
 //   }
 // };
 
-export const fetchLatestCommentsByTweetId = async (tweetId: string) => {
-  const commentRef = collection(db, "comments");
-  const queryComments = query(
-    commentRef,
-    where("tweetId", "==", tweetId),
-    orderBy("createdAt", "desc")
-  );
-  return await getDocs(queryComments).then((snapshot) => {
+export const fetchLatestTweetComments = async (tweetId: string) => {
+  try {
+    const commentRef = collection(db, "comments");
+    const queryComments = query(
+      commentRef,
+      where("tweetId", "==", tweetId),
+      orderBy("createdAt", "desc")
+    );
+
+    const snapshot = await getDocs(queryComments);
     return snapshot.docs.map(mapCommentFromFirebaseToCommentObject);
-  });
+  } catch (error) {
+    console.log(error);
+    return [];
+  }
 };
 
 const mapCommentFromFirebaseToCommentObject = (doc: any) => {
