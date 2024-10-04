@@ -1,8 +1,17 @@
 import { useEffect, useState } from "react";
-import { addComment, deleteComment, fetchLatestTweetComments } from "../firebase/client";
+import {
+  addComment,
+  deleteComment,
+  editComment,
+  fetchLatestTweetComments,
+} from "../firebase/client";
 import { Comment, User } from "@/lib/definitions";
 
-export default function useComment({ tweetId }: { tweetId: string | undefined }) {
+export default function useComment({
+  tweetId,
+}: {
+  tweetId: string | undefined;
+}) {
   const [comments, setComments] = useState<Comment[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -36,27 +45,52 @@ export default function useComment({ tweetId }: { tweetId: string | undefined })
 
       const updatedComments = await fetchLatestTweetComments(tweetId);
       setComments(updatedComments);
-    } catch (error) {
-    }
+    } catch (error) {}
   };
 
-  const deleteUserComment = async ({ commentId, userId }: { commentId: string; userId: string }) => {
+  const deleteUserComment = async ({
+    commentId,
+    userId,
+  }: {
+    commentId: string;
+    userId: string;
+  }) => {
     if (!tweetId) return;
 
     try {
-        await deleteComment({ tweetId, commentId, userId });
+      await deleteComment({ tweetId, commentId, userId });
 
-        const updatedComments = await fetchLatestTweetComments(tweetId);
-        setComments(updatedComments);
+      const updatedComments = await fetchLatestTweetComments(tweetId);
+      setComments(updatedComments);
+    } catch (error) {}
+  };
+
+  const editUserComment = async ({
+    commentId,
+    userId,
+    content,
+  }: {
+    commentId: string;
+    userId: string;
+    content: string;
+  }) => {
+    if (!tweetId) return;
+
+    try {
+      await editComment({ commentId, userId, content });
+
+      const updatedComments = await fetchLatestTweetComments(tweetId);
+      setComments(updatedComments);
     } catch (error) {
-        
+      
     }
-  }
+  };
 
   return {
     comments,
     loading,
     addNewComment,
     deleteUserComment,
+    editUserComment,
   };
 }

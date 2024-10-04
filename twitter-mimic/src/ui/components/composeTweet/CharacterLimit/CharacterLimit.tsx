@@ -6,8 +6,8 @@ export default function CharacterLimit({
   MAX_CHARS: number;
 }) {
   return (
-    <section className="text-gray-400 flex flex-col gap-1">
-      <span>
+    <section className="text-gray-400 flex gap-4">
+      <span className="w-1/4">
         {message ? message.length : 0}/{MAX_CHARS}
       </span>
       <span

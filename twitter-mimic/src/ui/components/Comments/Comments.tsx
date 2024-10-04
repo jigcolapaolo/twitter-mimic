@@ -1,6 +1,6 @@
 "use client";
 
-import { MouseEventHandler, useState } from "react";
+import { MouseEventHandler, useEffect, useState } from "react";
 import { SyncLoader } from "react-spinners";
 import { Button } from "../Button";
 import styles from "./comments.module.css";
@@ -15,16 +15,28 @@ import useTimeAgo from "../../../../hooks/useTimeAgo";
 import CharacterLimit from "../composeTweet/CharacterLimit/CharacterLimit";
 import useComment from "../../../../hooks/useComment";
 import CommentMenu from "./CommentMenu";
+import CommentEdit from "./CommentEdit";
 
 export default function Comments({ tweetId }: { tweetId: string }) {
   const [isMenuOpen, setIsMenuOpen] = useState<string | undefined>(undefined);
+  const [isEditOpen, setIsEditOpen] = useState<string | undefined>(undefined);
 
   const { message, isButtonDisabled, setMessage, setStatus, handleChange } =
     useTextChange();
-  const { comments, loading, addNewComment, deleteUserComment } = useComment({
+  const {
+    comments,
+    loading,
+    addNewComment,
+    deleteUserComment,
+    editUserComment,
+  } = useComment({
     tweetId,
   });
   const user = useUser();
+
+  useEffect(() => {
+    setIsMenuOpen(undefined);
+  }, [isEditOpen]);
 
   const handleAddComment: MouseEventHandler<HTMLButtonElement> = async (e) => {
     e.preventDefault();
@@ -76,19 +88,33 @@ export default function Comments({ tweetId }: { tweetId: string }) {
                 <span className="text-gray-400"> · </span>
                 <TimeAgo createdAt={comment.createdAt} />
               </div>
-              <p className={`text-gray-500 ${styles.commentText}`}>
-                {comment.content}
-              </p>
+              {isEditOpen === comment.id ? (
+                <CommentEdit
+                  id={comment.id}
+                  content={comment.content}
+                  userId={user?.uid}
+                  editUserComment={editUserComment}
+                  setIsEditOpen={setIsEditOpen}
+                />
+              ) : (
+                <p className={`text-gray-500 ${styles.commentText}`}>
+                  {comment.content}
+                </p>
+              )}
             </div>
-            <div className={styles.commentMenu}>
-              <CommentMenu
-                id={comment.id}
-                userId={user?.uid}
-                isMenuOpen={isMenuOpen}
-                setIsMenuOpen={setIsMenuOpen}
-                deleteUserComment={deleteUserComment}
-              />
-            </div>
+            {user?.uid === comment.userId && (
+              <div className={styles.commentMenu}>
+                <CommentMenu
+                  id={comment.id}
+                  userId={user?.uid}
+                  isMenuOpen={isMenuOpen}
+                  setIsMenuOpen={setIsMenuOpen}
+                  deleteUserComment={deleteUserComment}
+                  isEditOpen={isEditOpen}
+                  setIsEditOpen={setIsEditOpen}
+                />
+              </div>
+            )}
           </article>
         ))
       )}

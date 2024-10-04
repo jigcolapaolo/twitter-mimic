@@ -394,12 +394,11 @@ export const addComment = async ({
     const commentId = newComment.id;
     await updateDoc(doc(db, "tweets", tweetId), {
       usersComments: arrayUnion(commentId),
-    })
+    });
 
     await updateDoc(doc(db, "users", userId), {
       comments: arrayUnion(commentId),
-    })
-
+    });
   } catch (error) {
     throw new Error("Error al agregar comentario");
   }
@@ -408,27 +407,50 @@ export const addComment = async ({
 export const deleteComment = async ({
   tweetId,
   commentId,
-  userId
+  userId,
 }: {
   tweetId: string;
   commentId: string;
-  userId: string
+  userId: string;
 }) => {
-
   try {
     const commentRef = doc(db, "comments", commentId);
     await deleteDoc(commentRef);
 
     await updateDoc(doc(db, "tweets", tweetId), {
       usersComments: arrayRemove(commentId),
-    })
+    });
 
     await updateDoc(doc(db, "users", userId), {
       comments: arrayRemove(commentId),
-    })
-
+    });
   } catch (error) {
     throw new Error("Error al borrar comentario");
+  }
+};
+
+export const editComment = async ({
+  commentId,
+  userId,
+  content,
+}: {
+  commentId: string;
+  userId: string;
+  content: string;
+}) => {
+  try {
+    const commentRef = doc(db, "comments", commentId);
+    const commentSnap = await getDoc(commentRef);
+
+    if (!commentSnap.exists()) throw new Error("Comentario no encontrado");
+
+    if (commentSnap.data().userId !== userId)
+      throw new Error("No eres el autor del comentario");
+
+    await updateDoc(commentRef, {
+      content,
+    });
+  } catch (error) {
   }
 };
 
@@ -444,7 +466,6 @@ export const fetchLatestTweetComments = async (tweetId: string) => {
     const snapshot = await getDocs(queryComments);
     return snapshot.docs.map(mapCommentFromFirebaseToCommentObject);
   } catch (error) {
-    console.log(error);
     return [];
   }
 };

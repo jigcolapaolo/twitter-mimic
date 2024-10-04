@@ -23,6 +23,7 @@ export default function useTextChange() {
 
   return {
     message,
+    status,
     isButtonDisabled,
     setMessage,
     setStatus,

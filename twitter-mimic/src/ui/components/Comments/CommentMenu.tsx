@@ -5,6 +5,15 @@ import styles from "./commentMenu.module.css"
 import EditIcon from "@/ui/icons/EditIcon";
 import DeleteIcon from "@/ui/icons/DeleteIcon";
 
+interface CommentMenuProps {
+  id: string;
+  userId: string | undefined;
+  isMenuOpen: string | undefined;
+  setIsMenuOpen: React.Dispatch<React.SetStateAction<string | undefined>>;
+  deleteUserComment: ({ commentId, userId }: { commentId: string; userId: string }) => Promise<void>;
+  isEditOpen: string | undefined;
+  setIsEditOpen: React.Dispatch<React.SetStateAction<string | undefined>>;
+}
 
 export default function CommentMenu({
     id,
@@ -12,13 +21,9 @@ export default function CommentMenu({
     isMenuOpen,
     setIsMenuOpen,
     deleteUserComment,
-  }: {
-    id: string;
-    userId: string | undefined;
-    isMenuOpen: string | undefined;
-    setIsMenuOpen: React.Dispatch<React.SetStateAction<string | undefined>>;
-    deleteUserComment: ({ commentId, userId }: { commentId: string; userId: string }) => Promise<void>;
-  }) {
+    isEditOpen,
+    setIsEditOpen,
+  }: CommentMenuProps) {
 
 
     const handleMenuClick: MouseEventHandler<HTMLButtonElement> = (e) => {
@@ -39,12 +44,10 @@ export default function CommentMenu({
         }
       }
   
-    // const handleEditClick: MouseEventHandler<HTMLButtonElement> = (e) => {
-    //   e.preventDefault();
-    //   e.stopPropagation();
-    //   router.push(`/status/edit/${id}`);
-  
-    // }
+    const handleEditClick: MouseEventHandler<HTMLButtonElement> = (e) => {
+      e.preventDefault();
+      setIsEditOpen(isEditOpen === id ? undefined : id);
+    }
 
     return (
     <div className={styles.commentMenuDiv}>
@@ -57,7 +60,7 @@ export default function CommentMenu({
           isMenuOpen === id ? styles.opacityOpen : styles.opacityClosed
         }`}
       >
-        <button>
+        <button onClick={handleEditClick}>
           <EditIcon />
           Editar
         </button>
