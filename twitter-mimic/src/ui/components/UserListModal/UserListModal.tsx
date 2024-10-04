@@ -42,14 +42,14 @@ export default function UserListModal({
       ) : users.length > 0 ? (
         <section className={className !== "" ? className : styles.autocompleteList}>
           {users.map((user) => (
-            <div
+            <figure
               key={user.uid}
               className={styles.autocompleteItem}
               onClick={() => handleUserSelect(user)}
             >
               <Avatar src={user.avatar} alt={user.displayName} />
               {user.displayName}
-            </div>
+            </figure>
           ))}
         </section>
       ) : (

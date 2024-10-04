@@ -79,9 +79,9 @@ export default function Comments({ tweetId }: { tweetId: string }) {
       ) : (
         comments.map((comment) => (
           <article className={styles.comment} key={comment.id}>
-            <div className={styles.commentAvatar}>
+            <figure className={styles.commentAvatar}>
               <Avatar alt={comment.userName} src={comment.avatar} />
-            </div>
+            </figure>
             <div className={styles.commentInfo}>
               <div>
                 <strong>{comment.userName}</strong>

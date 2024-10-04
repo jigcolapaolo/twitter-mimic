@@ -135,9 +135,9 @@ function Tweet({
 
   return (
     <article key={id} className={styles.article} onClick={handleArticleClick}>
-      <div className={styles.avatarDiv}>
+      <figure className={styles.avatarDiv}>
         <Avatar src={avatar} alt={userName} />
-      </div>
+      </figure>
       <section>
         <header className={styles.tweetHeader}>
           <div>
