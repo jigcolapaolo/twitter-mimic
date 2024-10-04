@@ -10,7 +10,6 @@ import useRetweet from "../../../hooks/useRetweet";
 import { User } from "@/lib/definitions";
 import useLikeTweet from "../../../hooks/useLikeTweet";
 import { useRouter } from "next/navigation";
-import { Tooltip } from "react-tooltip";
 
 interface TweetFooterProps {
   handleUserLike: MouseEventHandler;
@@ -86,7 +85,6 @@ export default function TweetFooter({
           <span>{sharedCountUi}</span>
         </button>
       )}
-      <Tooltip id={id} place="top" style={{ padding: "0.3rem" }} />
       <button data-tooltip-id={id} data-tooltip-content="Copiar link" onClick={handleCopyTweetLink}>
         <ChainIcon />
       </button>

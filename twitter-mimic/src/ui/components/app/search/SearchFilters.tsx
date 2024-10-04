@@ -45,8 +45,7 @@ export default function SearchFilters({
 
   const handleUserSelect = (user: User) => {
     setSelectedUser(user);
-    setFilteredUsers([]);
-    setSearchQuery("");
+    setFilteredUsers(undefined);
 
     if (filter === TWEET_FILTER.MY_TWEETS) {
       setFilter(TWEET_FILTER.TOP);
@@ -122,7 +121,7 @@ export default function SearchFilters({
       </section>
 
       <UserListModal
-        users={filteredUsersMemorized}
+        users={filteredUsersMemorized || undefined}
         handleUserSelect={handleUserSelect}
       />
     </>

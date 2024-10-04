@@ -63,14 +63,25 @@
 
 .article {
   display: flex;
+  flex-direction: column;
   padding: 10px 15px;
   border-bottom: 1px solid #eee;
+  width: 100%;
+  position: relative;
+}
+
+.tweetContentInfo {
+  display: flex;
+  width: 100%;
+}
+
+.tweetContent {
+  width: 100%;
 }
 
 .article > section {
   overflow: hidden;
   overflow-wrap: break-word;
-  position: relative;
   width: 100%;
 }
 
@@ -89,6 +100,18 @@
   background-size: 180px 180px;
   background-position: center;
   stroke: var(--primary-color-alt);
+}
+
+.retweetHeader {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.5rem;
+}
+
+.retweetHeader img {
+  width: 40px;
+  height: 40px;
 }
 
 .article:hover {

@@ -32,9 +32,9 @@ export default function RetweetContent({
         margin: "0.4rem 0",
       }}
     >
-      <div style={{ display: "flex", gap: "0.5rem" }}>
+      <div style={{ display: "flex", flexDirection: "column" , gap: "0.5rem" }}>
+        <header className={styles.retweetHeader}>
         <Avatar src={sharedAvatar} alt={sharedUserName} />
-        <header className={styles.tweetHeader}>
           <div>
             <strong>{sharedUserName}</strong>
             <span className="text-gray-400"> · </span>
@@ -43,9 +43,9 @@ export default function RetweetContent({
                 {sharedTimeago}
               </time>
             </Link>
-            <p className={styles.p}>{content}</p>
           </div>
         </header>
+            <p className={styles.p}>{content}</p>
       </div>
 
       {img && (

@@ -14,7 +14,7 @@ export default function useSearchUsers({
 }: {
   searchQuery: string;
 }) {
-  const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
+  const [filteredUsers, setFilteredUsers] = useState<User[] | undefined>(undefined);
   const [searchState, setSearchState] = useState(SEARCH_STATES.WAITING);
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
 
@@ -32,7 +32,7 @@ export default function useSearchUsers({
             setSearchState(SEARCH_STATES.WAITING);
           });
       } else {
-        setFilteredUsers([]);
+        setFilteredUsers(undefined);
       }
     };
 
