@@ -2,7 +2,6 @@
 
 import { Button } from "@/ui/components/Button";
 import styles from "@/ui/styles/composeTweet.module.css";
-import composeStyles from "@/ui/styles/composeTweet.module.css";
 import useUser from "../../../../hooks/useUser";
 import { FormEvent } from "react";
 import { addTweet } from "../../../../firebase/client";
@@ -57,8 +56,8 @@ export default function ComposeTweet() {
 
   return (
     <>
-      <ReturnButton className={composeStyles.svgButton}>
-        <ArrowLeft width={35} height={35} className={composeStyles.svg} />
+      <ReturnButton className={styles.svgButton}>
+        <ArrowLeft width={35} height={35} className={styles.svg} />
       </ReturnButton>
       <section className={styles.section}>
         <figure className={styles.avatarSection}>

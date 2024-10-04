@@ -1,6 +1,8 @@
 .section {
   display: flex;
   align-items: flex-start;
+  width: 100%;
+  padding: .4rem .4rem 0 .4rem;
 }
 
 .svgButton {
@@ -23,8 +25,10 @@
 }
 
 .avatarSection {
-  padding-top: 10px;
-  padding-left: 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   width: 15%;
 }
 
