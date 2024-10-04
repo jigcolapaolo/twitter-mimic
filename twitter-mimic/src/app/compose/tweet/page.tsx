@@ -2,6 +2,7 @@
 
 import { Button } from "@/ui/components/Button";
 import styles from "@/ui/styles/composeTweet.module.css";
+import composeStyles from "@/ui/styles/composeTweet.module.css";
 import useUser from "../../../../hooks/useUser";
 import { FormEvent } from "react";
 import { addTweet } from "../../../../firebase/client";
@@ -9,13 +10,13 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Avatar } from "@/ui/components/Avatar";
 import ArrowLeft from "@/ui/icons/ArrowLeft";
-import Link from "next/link";
 import useUploadImg, {
   DRAG_IMAGE_STATES,
 } from "../../../../hooks/useUploadImg";
 import ImgLoadingMsg from "@/ui/components/composeTweet/ImgLoadingMsg/ImgLoadingMsg";
 import CharacterLimit from "@/ui/components/composeTweet/CharacterLimit/CharacterLimit";
 import useTextChange, { MAX_CHARS, TEXT_STATES } from "../../../../hooks/useTextChange";
+import ReturnButton from "@/ui/components/ReturnButton";
 
 
 
@@ -56,9 +57,9 @@ export default function ComposeTweet() {
 
   return (
     <>
-      <Link href={"/home"} className={styles.svgButton}>
-        <ArrowLeft width={35} height={35} className={styles.svg} />
-      </Link>
+      <ReturnButton className={composeStyles.svgButton}>
+        <ArrowLeft width={35} height={35} className={composeStyles.svg} />
+      </ReturnButton>
       <section className={styles.section}>
         <figure className={styles.avatarSection}>
           {user && <Avatar src={user.avatar} alt={user.displayName} />}

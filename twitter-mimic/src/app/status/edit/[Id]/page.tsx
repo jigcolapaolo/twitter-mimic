@@ -8,7 +8,7 @@ import { Button } from "@/ui/components/Button";
 import ImgLoadingMsg from "@/ui/components/composeTweet/ImgLoadingMsg/ImgLoadingMsg";
 import Image from "next/image";
 import CharacterLimit from "@/ui/components/composeTweet/CharacterLimit/CharacterLimit";
-import Link from "next/link";
+import composeStyles from "@/ui/styles/composeTweet.module.css";
 import ArrowLeft from "@/ui/icons/ArrowLeft";
 import styles from "@/ui/styles/composeTweet.module.css";
 import { Avatar } from "@/ui/components/Avatar";
@@ -16,6 +16,7 @@ import useUploadImg, {
   DRAG_IMAGE_STATES,
 } from "../../../../../hooks/useUploadImg";
 import { toast } from "sonner";
+import ReturnButton from "@/ui/components/ReturnButton";
 
 const EDIT_STATES = {
   USER_NOT_KNOWN: 0,
@@ -88,7 +89,6 @@ export default function EditTweetPage({ params }: { params: { Id: string } }) {
         return res.json();
       })
       .then((nextResponse) => {
-        
         toast.success(nextResponse.message);
         setStatus(EDIT_STATES.SUCCESS);
         push("/home");
@@ -110,13 +110,13 @@ export default function EditTweetPage({ params }: { params: { Id: string } }) {
     !message ||
     message.length === 0 ||
     status === EDIT_STATES.LOADING ||
-    (message === tweet?.content && imgURL === tweet?.img );
+    (message === tweet?.content && imgURL === tweet?.img);
 
   return (
     <>
-      <Link href={"/home"} className={styles.svgButton}>
-        <ArrowLeft width={35} height={35} className={styles.svg} />
-      </Link>
+      <ReturnButton className={composeStyles.svgButton}>
+        <ArrowLeft width={35} height={35} className={composeStyles.svg} />
+      </ReturnButton>
       <section className={styles.section}>
         <figure className={styles.avatarSection}>
           {user && <Avatar src={user.avatar} alt={user.displayName} />}
