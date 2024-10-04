@@ -77,6 +77,8 @@
 
 .tweetContent {
   width: 100%;
+  overflow: hidden;
+  overflow-wrap: break-word;
 }
 
 .article > section {
@@ -107,6 +109,10 @@
   align-items: center;
   justify-content: flex-start;
   gap: 0.5rem;
+}
+
+.retweetHeader + p {
+  margin-left: 10px;
 }
 
 .retweetHeader img {
@@ -267,7 +273,6 @@
 .tweetMenuDiv > div button:nth-child(2):hover {
   color: rgb(255, 0, 0);
 }
-
 
 
 
