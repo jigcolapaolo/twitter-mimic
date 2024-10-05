@@ -20,7 +20,7 @@ export default function useTextChange() {
 
     if (value.length <= MAX_CHARS) setMessage(value);
   };
-
+  
   return {
     message,
     status,

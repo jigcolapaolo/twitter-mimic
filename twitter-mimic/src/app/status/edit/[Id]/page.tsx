@@ -1,6 +1,6 @@
 "use client";
 
-import { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import useUser from "../../../../../hooks/useUser";
 import { useRouter } from "next/navigation";
 import { Timeline } from "@/lib/definitions";
@@ -17,23 +17,18 @@ import useUploadImg, {
 } from "../../../../../hooks/useUploadImg";
 import { toast } from "sonner";
 import ReturnButton from "@/ui/components/ReturnButton";
-
-const EDIT_STATES = {
-  USER_NOT_KNOWN: 0,
-  LOADING: 1,
-  SUCCESS: 2,
-  ERROR: -1,
-};
-
-const MAX_CHARS = 280;
+import useTextChange, {
+  MAX_CHARS,
+  TEXT_STATES,
+} from "../../../../../hooks/useTextChange";
 
 export default function EditTweetPage({ params }: { params: { Id: string } }) {
   const { Id } = params;
   const user = useUser();
   const { push } = useRouter();
   const [tweet, setTweet] = useState<Timeline | null>(null);
-  const [message, setMessage] = useState<string>();
-  const [status, setStatus] = useState<number>(EDIT_STATES.USER_NOT_KNOWN);
+  const { message, setMessage, setStatus, isButtonDisabled, handleChange } =
+    useTextChange();
 
   const {
     drag,
@@ -51,20 +46,20 @@ export default function EditTweetPage({ params }: { params: { Id: string } }) {
     })
       .then((res) => {
         if (!res.ok) throw new Error("Error al obtener el tweet");
-        setStatus(EDIT_STATES.LOADING);
+        setStatus(TEXT_STATES.LOADING);
         return res.json();
       })
       .then((data: Timeline) => {
         setTweet(data);
         setMessage(data.content);
         setImgURL(data.img);
-        setStatus(EDIT_STATES.SUCCESS);
+        setStatus(TEXT_STATES.SUCCESS);
       })
       .catch((err) => {
         console.error(err);
         push("/home");
       });
-  }, [Id, push, setImgURL]);
+  }, [Id, push, setImgURL, setMessage, setStatus]);
 
   useEffect(() => {
     if (tweet && user && user?.uid !== tweet?.userId) push("/home");
@@ -72,7 +67,7 @@ export default function EditTweetPage({ params }: { params: { Id: string } }) {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setStatus(EDIT_STATES.LOADING);
+    setStatus(TEXT_STATES.LOADING);
 
     fetch(`/api/tweets/put/${Id}`, {
       method: "PUT",
@@ -90,27 +85,14 @@ export default function EditTweetPage({ params }: { params: { Id: string } }) {
       })
       .then((nextResponse) => {
         toast.success(nextResponse.message);
-        setStatus(EDIT_STATES.SUCCESS);
+        setStatus(TEXT_STATES.SUCCESS);
         push("/home");
       })
       .catch(() => {
         toast.error("Error al editar el tweet");
-        setStatus(EDIT_STATES.ERROR);
+        setStatus(TEXT_STATES.ERROR);
       });
   };
-
-  const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
-    e.preventDefault();
-    const { value } = e.target;
-
-    if (value.length <= MAX_CHARS) setMessage(value);
-  };
-
-  const isButtonDisabled =
-    !message ||
-    message.length === 0 ||
-    status === EDIT_STATES.LOADING ||
-    (message === tweet?.content && imgURL === tweet?.img);
 
   return (
     <>
@@ -131,7 +113,7 @@ export default function EditTweetPage({ params }: { params: { Id: string } }) {
                   : "3px solid transparent",
             }}
             placeholder={
-              EDIT_STATES.LOADING ? "Cargando..." : "¿Que estas pensando?"
+              TEXT_STATES.LOADING ? "Cargando..." : "¿Que estas pensando?"
             }
             onChange={handleChange}
             onDragEnter={handleDragEnter}
@@ -161,7 +143,10 @@ export default function EditTweetPage({ params }: { params: { Id: string } }) {
           )}
           <div className={styles.div}>
             <Button
-              disabled={isButtonDisabled}
+              disabled={
+                isButtonDisabled ||
+                (message === tweet?.content && imgURL === tweet?.img)
+              }
               className={`${styles.button} w-2/5 tracking-widest`}
             >
               Modificar Tweet
