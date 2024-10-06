@@ -1,19 +1,30 @@
 import { SharedTweet, Timeline, User } from "@/lib/definitions";
 import { useEffect, useState } from "react";
-import { fetchTweetById, listenLatestTweets } from "../firebase/client";
+import {
+  fetchTweetById,
+  listenLatestTweets,
+
+  loadMoreTweets,
+
+} from "../firebase/client";
+import { FilterState } from "@/app/search/page";
 
 interface UseTimelineProps {
   singleTimeline?: Timeline[];
   user?: User | null;
+  filterState?: FilterState;
 }
 
 export default function useTimeline({
   singleTimeline,
   user,
+  filterState,
 }: UseTimelineProps) {
   const [timeline, setTimeline] = useState<Timeline[]>([]);
   const [retweets, setRetweets] = useState<SharedTweet[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const [isFetchingMore, setIsFetchingMore] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -25,18 +36,34 @@ export default function useTimeline({
     }
 
     setLoading(true);
-    const unsubscribe: any = listenLatestTweets((newTweets: any) => {
-      setTimeline(newTweets);
-      setLoading(false);
-    });
 
-    return () => unsubscribe();
+    const unsubscribe = listenLatestTweets(
+      (newTweets : any) => {
+        setTimeline(newTweets);
+        setLoading(false);
+      },
+      filterState?.filter,
+      filterState?.filterUserId
+    );
+  
+    return () => unsubscribe && unsubscribe();
 
-    // user &&
-    //   fetchLatestTweets().then((data: any) => {
-    //     setTimeline(data);
-    //   });
-  }, [user, singleTimeline]);
+  }, [user, singleTimeline, filterState]);
+
+  const handleLoadMore = () => {
+    loadMoreTweets(
+      (newTweets: any) => {
+        setTimeline((prev) => [
+          ...prev.filter((tweet) => !newTweets.some((nt: any) => nt.id === tweet.id)),
+          ...newTweets,
+        ]);
+      },
+      setIsFetchingMore,
+      filterState?.filter,
+      filterState?.filterUserId
+    );
+  };
+  
 
   useEffect(() => {
     const fetchRetweets = async () => {
@@ -63,5 +90,7 @@ export default function useTimeline({
     timeline,
     retweets,
     loading,
+    isFetchingMore,
+    handleLoadMore,
   };
 }

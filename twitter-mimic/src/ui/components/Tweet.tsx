@@ -18,14 +18,20 @@ import RetweetIcon from "../icons/Retweet";
 import RetweetContent from "./RetweetContent";
 import { SyncLoader } from "react-spinners";
 import { Tooltip } from "react-tooltip";
+import useInfiniteScroll from "../../../hooks/useInfiniteScroll";
+import { FilterState } from "@/app/search/page";
 
 export default function TweetClient({
   singleTimeline,
+  filterState,
 }: {
   singleTimeline?: Timeline[];
+  filterState?: FilterState;
+
 }) {
   const user = useUser();
-  const { timeline, retweets, loading } = useTimeline({ singleTimeline, user });
+  const { timeline, retweets, loading, isFetchingMore, handleLoadMore } = useTimeline({ singleTimeline, user, filterState });
+  const { sectionRef } = useInfiniteScroll({ handleLoadMore })
 
   const [isMenuOpen, setIsMenuOpen] = useState<string | undefined>(undefined);
   const [likeModalState, setLikeModalState] = useState<LikeModalState>({
@@ -33,8 +39,9 @@ export default function TweetClient({
     usersLiked: [],
   });
 
+
   return (
-    <>
+    <section ref={sectionRef} style={{ overflowY: "auto", width: "100%", height: "100%" }}>
       {loading ? (
         <div className="flex justify-center items-center h-full">
           <SyncLoader color="#3498db" loading={loading} />
@@ -77,7 +84,11 @@ export default function TweetClient({
           );
         })
       )}
-    </>
+      {isFetchingMore ?  (
+        <div className="flex h-1/6 justify-center items-center"><SyncLoader color="#3498db" /></div>
+      ) : null}
+
+    </section>
   );
 }
 
@@ -149,7 +160,7 @@ function Tweet({
                 </time>
               </Link>
             </div>
-            {user && user.uid === userId && (
+            {(user && user.uid === userId && !isRetweet) && (
               <TweetMenu
                 id={id}
                 isMenuOpen={isMenuOpen}
@@ -215,7 +226,7 @@ function Tweet({
           <UserListModal
             users={likeModalState.usersLiked}
             handleUserSelect={() => {}}
-            className={`${styles.likeModalDiv}`}
+            className={styles.likeModalDiv}
             loadingUsers={loadingUsers}
           />
         )}

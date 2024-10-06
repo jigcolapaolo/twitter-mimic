@@ -1,4 +1,5 @@
 import { User } from "@/lib/definitions";
+import { TWEET_FILTER } from "@/ui/components/app/search/SearchFilters";
 import { initializeApp } from "firebase/app";
 import {
   getAuth,
@@ -16,11 +17,13 @@ import {
   getDoc,
   getDocs,
   getFirestore,
+  limit,
   onSnapshot,
   orderBy,
   query,
   serverTimestamp,
   setDoc,
+  startAfter,
   updateDoc,
   where,
 } from "firebase/firestore";
@@ -347,14 +350,67 @@ export const fetchTweetById = async (id: string) => {
   return mapTweetFromFirebaseToTweetObject(userSnap);
 };
 
+
 // Para actualizar en tiempo real con firebase
 // onSnapshot realiza una suscripcion en tiempo real a firebase, funciona en useEffect
-export const listenLatestTweets = (callback: any) => {
-  return onSnapshot(
-    query(collection(db, "tweets"), orderBy("createdAt", "desc")),
-    (snapshot) => callback(snapshot.docs.map(mapTweetFromFirebaseToTweetObject))
-  );
+// export const listenLatestTweets = (callback: any) => {
+  //   return onSnapshot(
+    //     query(
+      //       collection(db, "tweets"),
+      //       orderBy("createdAt", "desc"),
+      //       startAt(1),
+      //       endAt(5),
+      
+//     ),
+//     (snapshot) => callback(snapshot.docs.map(mapTweetFromFirebaseToTweetObject))
+//   );
+// };
+
+
+// Se mantiene el último tweet para la paginación
+let lastVisible: any = null;
+
+const getTweetsQuery = (filter?: string, userId?: string, lastVisibleRef?: any) => {
+  const baseQuery = collection(db, "tweets");
+  const orderByField = filter === TWEET_FILTER.TOP ? "likesCount" : "createdAt";
+  const conditions = [
+    orderBy(orderByField, "desc"),
+    limit(5),
+    ...(userId ? [where("userId", "==", userId)] : []),
+    ...(lastVisibleRef ? [startAfter(lastVisibleRef)] : [])
+  ];
+  return query(baseQuery, ...conditions);
 };
+
+
+export const listenLatestTweets = (callback: any, filter?: string, userId?: string) => {
+  lastVisible = null;
+  const tweetsQuery = getTweetsQuery(filter, userId);
+  
+  return onSnapshot(tweetsQuery, (snapshot) => {
+    const tweets = snapshot.docs.map(mapTweetFromFirebaseToTweetObject);
+    lastVisible = snapshot.docs[snapshot.docs.length - 1];
+    const filteredTweets = filter === TWEET_FILTER.TOP ? tweets.filter(tweet => !tweet.sharedId) : tweets;
+    callback(filteredTweets);
+  });
+};
+
+
+export const loadMoreTweets = (callback: any, setHasMoreTweets: any, filter?: string, userId?: string) => {
+  if (!lastVisible) return setHasMoreTweets(false);
+
+  const tweetsQuery = getTweetsQuery(filter, userId, lastVisible);
+  
+  onSnapshot(tweetsQuery, (snapshot) => {
+    const moreTweets = snapshot.docs.map(mapTweetFromFirebaseToTweetObject);
+    lastVisible = snapshot.docs[snapshot.docs.length - 1];
+    const filteredTweets = filter === TWEET_FILTER.TOP ? moreTweets.filter(tweet => !tweet.sharedId) : moreTweets;
+
+    setHasMoreTweets(moreTweets.length === 5);
+    callback(filteredTweets);
+  });
+};
+
 
 // Para obtener los IDs de todos los tweets para ISR
 export const fetchLatestTweets = async () => {

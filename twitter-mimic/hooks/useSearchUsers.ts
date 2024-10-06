@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useDebounce } from "./useDebounce";
 import { User } from "@/lib/definitions";
 import { fetchUsersByQuery } from "../firebase/client";
@@ -39,8 +39,10 @@ export default function useSearchUsers({
     fetchUsers();
   }, [debouncedSearchQuery]);
 
+  const filteredUsersMemorized = useMemo(() => filteredUsers, [filteredUsers]);
+
   return {
-    filteredUsers,
+    filteredUsers: filteredUsersMemorized,
     setFilteredUsers,
     searchState,
   };

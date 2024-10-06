@@ -1,42 +1,53 @@
-import { Timeline, User } from "@/lib/definitions";
+"use client";
+
+import { User } from "@/lib/definitions";
 import styles from "@/ui/styles/search.module.css";
-import { ChangeEvent, useEffect, useMemo, useState } from "react";
-import useFilters, { TWEET_FILTER } from "../../../../../hooks/useFilters";
+import { ChangeEvent, useState } from "react";
 import SearchIcon from "@/ui/icons/SearchIcon";
 import UserListModal from "../../UserListModal/UserListModal";
 import useSearchUsers, {
   SEARCH_STATES,
 } from "../../../../../hooks/useSearchUsers";
 import { SyncLoader } from "react-spinners";
+import { FilterState } from "@/app/search/page";
+
+export const TWEET_FILTER = {
+  TOP: "top",
+  RECENT: "recent",
+  MY_TWEETS: "myTweets",
+};
 
 interface SearchFiltersProps {
-  timeline: Timeline[];
-  onFilterChange: (filter: Timeline[]) => void;
   userId: string | undefined;
+  filterState: FilterState;
+  onFilterChange: (newFilter: string, newFilterUserId?: string) => void;
 }
 
 export default function SearchFilters({
-  timeline,
-  onFilterChange,
   userId,
+  filterState,
+  onFilterChange,
 }: SearchFiltersProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const { filteredUsers, setFilteredUsers, searchState } = useSearchUsers({
     searchQuery,
   });
-  const { filter, setFilter, handleChangeFilter, filteredTweets } = useFilters({
-    timeline,
-    userId,
-    selectedUser,
-    setSelectedUser,
-  });
 
-  const filteredUsersMemorized = useMemo(() => filteredUsers, [filteredUsers]);
+  const handleChangeFilter = (e: ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
 
-  useEffect(() => {
-    onFilterChange(filteredTweets);
-  }, [filteredTweets, onFilterChange]);
+    const newFilterUserId =
+      value === TWEET_FILTER.MY_TWEETS
+        ? userId
+        : selectedUser
+        ? selectedUser.uid
+        : undefined;
+    onFilterChange(value, newFilterUserId);
+    if (value === TWEET_FILTER.MY_TWEETS) {
+      setSelectedUser(null);
+    }
+  };
 
   const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
@@ -47,9 +58,14 @@ export default function SearchFilters({
     setSelectedUser(user);
     setFilteredUsers(undefined);
 
-    if (filter === TWEET_FILTER.MY_TWEETS) {
-      setFilter(TWEET_FILTER.TOP);
-    }
+    onFilterChange(TWEET_FILTER.TOP, user.uid);
+  };
+
+  const handleUserRemove = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    setSelectedUser(null);
+    setFilteredUsers(undefined);
+    onFilterChange(TWEET_FILTER.TOP, undefined);
   };
 
   return (
@@ -68,6 +84,11 @@ export default function SearchFilters({
           {searchState === SEARCH_STATES.LOADING && (
             <SyncLoader size={5} color="#78b2f7" />
           )}
+          {selectedUser && (
+            <button onClick={handleUserRemove} className={styles.userRemoveBtn}>
+              {selectedUser.displayName}
+            </button>
+          )}
           {searchQuery !== "" && (
             <button
               onClick={() => setSearchQuery("")}
@@ -83,7 +104,7 @@ export default function SearchFilters({
               type="radio"
               id="top"
               value={TWEET_FILTER.TOP}
-              checked={filter === TWEET_FILTER.TOP}
+              checked={filterState.filter === TWEET_FILTER.TOP}
               onChange={handleChangeFilter}
             />
             <label className={styles.label} htmlFor="top">
@@ -97,7 +118,7 @@ export default function SearchFilters({
               type="radio"
               id="recent"
               value={TWEET_FILTER.RECENT}
-              checked={filter === TWEET_FILTER.RECENT}
+              checked={filterState.filter === TWEET_FILTER.RECENT}
               onChange={handleChangeFilter}
             />
             <label className={styles.label} htmlFor="recent">
@@ -110,7 +131,7 @@ export default function SearchFilters({
               type="radio"
               id="myTweets"
               value={TWEET_FILTER.MY_TWEETS}
-              checked={filter === TWEET_FILTER.MY_TWEETS}
+              checked={filterState.filter === TWEET_FILTER.MY_TWEETS}
               onChange={handleChangeFilter}
             />
             <label className={styles.label} htmlFor="myTweets">
@@ -119,9 +140,9 @@ export default function SearchFilters({
           </div>
         </div>
       </section>
-
       <UserListModal
-        users={filteredUsersMemorized || undefined}
+        className={styles.searchUserListModal}
+        users={filteredUsers || undefined}
         handleUserSelect={handleUserSelect}
       />
     </>
