@@ -16,6 +16,7 @@ import ImgLoadingMsg from "@/ui/components/composeTweet/ImgLoadingMsg/ImgLoading
 import CharacterLimit from "@/ui/components/composeTweet/CharacterLimit/CharacterLimit";
 import useTextChange, { MAX_CHARS, TEXT_STATES } from "../../../../hooks/useTextChange";
 import ReturnButton from "@/ui/components/ReturnButton";
+import { AvatarSkeleton } from "@/ui/components/skeletons/AvatarSkeleton";
 
 
 
@@ -61,7 +62,8 @@ export default function ComposeTweet() {
       </ReturnButton>
       <section className={styles.section}>
         <figure className={styles.avatarSection}>
-          {user && <Avatar src={user.avatar} alt={user.displayName} />}
+          {user && user.avatar ? <Avatar src={user.avatar} alt={user.displayName} /> : 
+            <AvatarSkeleton />}
         </figure>
         <form className={styles.form} onSubmit={handleSubmit}>
           <textarea

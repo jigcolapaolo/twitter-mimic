@@ -21,6 +21,7 @@ import useTextChange, {
   MAX_CHARS,
   TEXT_STATES,
 } from "../../../../../hooks/useTextChange";
+import { AvatarSkeleton } from "@/ui/components/skeletons/AvatarSkeleton";
 
 export default function EditTweetPage({ params }: { params: { Id: string } }) {
   const { Id } = params;
@@ -101,7 +102,8 @@ export default function EditTweetPage({ params }: { params: { Id: string } }) {
       </ReturnButton>
       <section className={styles.section}>
         <figure className={styles.avatarSection}>
-          {user && <Avatar src={user.avatar} alt={user.displayName} />}
+          {user && user.avatar ? <Avatar src={user.avatar} alt={user.displayName} /> :
+           <AvatarSkeleton />}
         </figure>
         <form className={styles.form} onSubmit={handleSubmit}>
           <textarea
