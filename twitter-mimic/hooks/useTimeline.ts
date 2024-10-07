@@ -67,6 +67,7 @@ export default function useTimeline({
 
   useEffect(() => {
     const fetchRetweets = async () => {
+      setLoading(true);
       const retweetsPromise = timeline
         .filter((tweet) => tweet.sharedId)
         .map(async (tweet) => {
@@ -74,9 +75,9 @@ export default function useTimeline({
           return retweetData;
         });
 
-      const resolvedRetweets = await Promise.all(retweetsPromise);
-      setRetweets(resolvedRetweets);
-      setLoading(false);
+        const resolvedRetweets = await Promise.all(retweetsPromise);
+        setRetweets(resolvedRetweets);
+        setLoading(false);
     };
 
     if (timeline.some((tweet) => tweet.sharedId)) {

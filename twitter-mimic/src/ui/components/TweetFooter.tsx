@@ -1,7 +1,6 @@
 import styles from "@/ui/styles/home.module.css";
 import { LikeIcon, LikeIconFilled } from "../icons/Like";
 import CommentIcon from "../icons/CommentIcon";
-import useUser from "../../../hooks/useUser";
 import RetweetIcon from "../icons/Retweet";
 import ChainIcon from "../icons/LinkIcon";
 import { MouseEventHandler } from "react";
@@ -10,6 +9,7 @@ import useRetweet from "../../../hooks/useRetweet";
 import { User } from "@/lib/definitions";
 import useLikeTweet from "../../../hooks/useLikeTweet";
 import { useRouter } from "next/navigation";
+import useUser from "../../../hooks/useUser";
 
 interface TweetFooterProps {
   handleUserLike: MouseEventHandler;
@@ -34,8 +34,8 @@ export default function TweetFooter({
   img,
   sharedCount,
 }: TweetFooterProps) {
-  const user = useUser();
   const router = useRouter();
+  const user = useUser();
   const { isTweetLiked, likesCountState, handleLikeTweet } = useLikeTweet(
     isLiked,
     likesCount,
@@ -66,6 +66,7 @@ export default function TweetFooter({
     router.push(`/status/${id}`);
   };
 
+
   return (
     <footer className={styles.footer}>
       <button onClick={handleLikeTweet}>
@@ -76,7 +77,7 @@ export default function TweetFooter({
         <CommentIcon />
         <span>{commentsCount}</span>
       </button>
-      {user?.uid !== userId && (
+      {user && user?.uid !== userId ? (
         <button
           style={isSharedUi ? { backgroundColor: "#B0E0E6" } : {}}
           onClick={handleRetweet}
@@ -84,7 +85,7 @@ export default function TweetFooter({
           <RetweetIcon />
           <span>{sharedCountUi}</span>
         </button>
-      )}
+      ) : null}
       <button data-tooltip-id={id} data-tooltip-content="Copiar link" onClick={handleCopyTweetLink}>
         <ChainIcon />
       </button>

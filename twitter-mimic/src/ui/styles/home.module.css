@@ -243,10 +243,6 @@
 
 /* Tweet Menu*/
 
-.tweetMenuDiv {
-  position: relative;
-}
-
 .tweetMenuDiv > div {
   position: absolute;
   right: 0;

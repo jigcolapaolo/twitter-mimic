@@ -242,13 +242,11 @@ export const retweet = async ({
 
     if (isRetweeted) {
       await updateDoc(userRef, {
-        sharedTweets: isRetweeted
-          ? arrayRemove(sharedId)
-          : arrayUnion(sharedId),
+        sharedTweets: arrayRemove(sharedId),
       });
 
       await updateDoc(originalTweetSnap.ref, {
-        sharedCount: isRetweeted ? sharedCount - 1 : sharedCount + 1,
+        sharedCount: sharedCount - 1,
       });
 
       const retweetQuery = query(

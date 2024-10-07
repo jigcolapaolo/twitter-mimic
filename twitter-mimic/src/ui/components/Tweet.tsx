@@ -42,7 +42,7 @@ export default function TweetClient({
 
   return (
     <section ref={sectionRef} style={{ overflowY: "auto", width: "100%", height: "100%" }}>
-      {loading ? (
+      {loading && !timeline.length ? (
         <div className="flex justify-center items-center h-full">
           <SyncLoader color="#3498db" loading={loading} />
         </div>
@@ -84,9 +84,9 @@ export default function TweetClient({
           );
         })
       )}
-      {isFetchingMore ?  (
+      {isFetchingMore && (
         <div className="flex h-1/6 justify-center items-center"><SyncLoader color="#3498db" /></div>
-      ) : null}
+      )}
 
     </section>
   );

@@ -7,7 +7,7 @@ export default function useLikeTweet(
   isLiked: boolean,
   likesCount: number,
   id: string,
-  user: User | null
+  user: User | null | undefined
 ) {
   const [isTweetLiked, setIsTweetLiked] = useState<boolean>(isLiked);
   const [likesCountState, setLikesCountState] = useState<number>(likesCount);

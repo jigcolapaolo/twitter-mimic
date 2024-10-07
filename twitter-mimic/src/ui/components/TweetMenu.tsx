@@ -16,7 +16,7 @@ export default function TweetMenu({
   setIsMenuOpen: React.Dispatch<React.SetStateAction<string | undefined>>;
 }) {
   const router = useRouter();
-
+  
   const handleMenuClick: MouseEventHandler<HTMLButtonElement> = (e) => {
     e.preventDefault();
     e.stopPropagation();
