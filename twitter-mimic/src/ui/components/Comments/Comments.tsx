@@ -1,7 +1,6 @@
 "use client";
 
 import { MouseEventHandler, useEffect, useState } from "react";
-import { SyncLoader } from "react-spinners";
 import { Button } from "../Button";
 import styles from "./comments.module.css";
 import useTextChange, {
@@ -57,8 +56,10 @@ export default function Comments({ tweetId }: { tweetId: string }) {
   };
 
   return (
-    <section className={styles.commentsContainer}>
-      {comments.length >= 0 && !loading && (
+<section className={styles.commentsContainer}>
+  {loading || comments.length === 0 ? null : (
+    <>
+      {comments.length >= 0 && (
         <div className={styles.addCommentDiv}>
           <textarea
             value={message}
@@ -72,9 +73,8 @@ export default function Comments({ tweetId }: { tweetId: string }) {
           </Button>
         </div>
       )}
-      {loading ? (
-        <SyncLoader size={5} color="#78b2f7" />
-      ) : comments.length === 0 ? (
+
+      {comments.length === 0 ? (
         <p className={styles.noComments}>No hay comentarios</p>
       ) : (
         comments.map((comment) => (
@@ -118,7 +118,9 @@ export default function Comments({ tweetId }: { tweetId: string }) {
           </article>
         ))
       )}
-    </section>
+    </>
+  )}
+</section>
   );
 }
 

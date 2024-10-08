@@ -38,8 +38,14 @@ export default function useTimeline({
     setLoading(true);
 
     const unsubscribe = listenLatestTweets(
-      (newTweets : any) => {
+      async (newTweets: any) => {
+        // Actualizamos la timeline con los nuevos tweets
         setTimeline(newTweets);
+        
+        // Obtenemos los retweets relacionados
+        const newRetweets = await fetchRetweets(newTweets);
+        setRetweets(newRetweets);
+        
         setLoading(false);
       },
       filterState?.filter,
@@ -49,6 +55,17 @@ export default function useTimeline({
     return () => unsubscribe && unsubscribe();
 
   }, [user, singleTimeline, filterState]);
+
+  const fetchRetweets = async (tweets: Timeline[]) => {
+    const retweetsPromise = tweets
+      .filter((tweet) => tweet.sharedId)
+      .map(async (tweet) => {
+        const retweetData = await fetchTweetById(tweet.sharedId as string);
+        return retweetData;
+      });
+
+    return await Promise.all(retweetsPromise);
+  };
 
   const handleLoadMore = () => {
     loadMoreTweets(
@@ -65,27 +82,7 @@ export default function useTimeline({
   };
   
 
-  useEffect(() => {
-    const fetchRetweets = async () => {
-      setLoading(true);
-      const retweetsPromise = timeline
-        .filter((tweet) => tweet.sharedId)
-        .map(async (tweet) => {
-          const retweetData = await fetchTweetById(tweet.sharedId as string);
-          return retweetData;
-        });
 
-        const resolvedRetweets = await Promise.all(retweetsPromise);
-        setRetweets(resolvedRetweets);
-        setLoading(false);
-    };
-
-    if (timeline.some((tweet) => tweet.sharedId)) {
-      fetchRetweets();
-    } else {
-      setLoading(false);
-    }
-  }, [timeline]);
 
   return {
     timeline,
