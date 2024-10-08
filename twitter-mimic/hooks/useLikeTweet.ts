@@ -11,6 +11,7 @@ export default function useLikeTweet(
 ) {
   const [isTweetLiked, setIsTweetLiked] = useState<boolean>(isLiked);
   const [likesCountState, setLikesCountState] = useState<number>(likesCount);
+  const [isAnimating, setIsAnimating] = useState<boolean>(false);
 
   useEffect(() => {
     if (user?.likedTweets) {
@@ -22,6 +23,12 @@ export default function useLikeTweet(
   const handleLikeTweet: MouseEventHandler<HTMLButtonElement> = async (e) => {
     e.preventDefault();
     e.stopPropagation();
+
+    setIsAnimating(true);
+
+    setTimeout(() => {
+      setIsAnimating(false);
+    }, 1500);
 
     if (user) {
       const previousLikedState = isTweetLiked;
@@ -44,5 +51,6 @@ export default function useLikeTweet(
     isTweetLiked,
     likesCountState,
     handleLikeTweet,
+    isAnimating,
   };
 }

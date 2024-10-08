@@ -41,7 +41,7 @@ export default function TweetFooter({
 }: TweetFooterProps) {
   const router = useRouter();
   const user = useUser();
-  const { isTweetLiked, likesCountState, handleLikeTweet } = useLikeTweet(
+  const { isTweetLiked, likesCountState, handleLikeTweet, isAnimating } = useLikeTweet(
     isLiked,
     likesCount,
     id,
@@ -76,7 +76,7 @@ export default function TweetFooter({
 
   return (
     <footer className={styles.footer}>
-      <button onClick={handleLikeTweet}>
+      <button onClick={handleLikeTweet} className={`${styles.likeBtn} ${isAnimating ? styles.animate : ""}`}>
         {isTweetLiked ? <LikeIconFilled /> : <LikeIcon />}
         <span onClick={handleUserLike}>{likesCountState}</span>
       </button>
