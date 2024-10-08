@@ -5,6 +5,8 @@ const isRelativeTimeFormatSupported =
   typeof Intl !== "undefined" && Intl.RelativeTimeFormat;
 
 const DATE_UNITS: [string, number][] = [
+  ["year", 31557600],
+  ["month", 2629800],
   ["day", 86400],
   ["hour", 3600],
   ["minute", 60],
@@ -18,6 +20,10 @@ const getDateDiffs = (timestamp: number) => {
   // tiempo pasado
   const elapsed = (timestamp - now) / 1000;
 
+  if (elapsed > 50 * 31557600) {
+    return { value: 0, unit: "second" };
+  }
+
   for (const [unit, secondsInUnit] of DATE_UNITS) {
     if (Math.abs(elapsed) > secondsInUnit || unit === "second") {
       const value = Math.round(elapsed / secondsInUnit);
@@ -29,7 +35,7 @@ const getDateDiffs = (timestamp: number) => {
 
 // También se puede usar una estrategia similar para controlar la inactividad del usuario
 export default function useTimeAgo(timestamp: number) {
-  const [timeago, setTimeago] = useState(() => getDateDiffs(timestamp));
+  const [timeago, setTimeago] = useState(timestamp == null ? () => ({ value: -1, unit: "second" }) : getDateDiffs(timestamp));
 
   useEffect(() => {
     if (isRelativeTimeFormatSupported) {
@@ -38,7 +44,7 @@ export default function useTimeAgo(timestamp: number) {
         setTimeago(newTimeAgo);
       }, 5000);
 
-      return () => clearTimeout(interval);
+      return () => clearInterval(interval);
     }
   }, [timestamp]);
 
