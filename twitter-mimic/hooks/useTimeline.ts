@@ -39,10 +39,8 @@ export default function useTimeline({
 
     const unsubscribe = listenLatestTweets(
       async (newTweets: any) => {
-        // Actualizamos la timeline con los nuevos tweets
         setTimeline(newTweets);
         
-        // Obtenemos los retweets relacionados
         const newRetweets = await fetchRetweets(newTweets);
         setRetweets(newRetweets);
         

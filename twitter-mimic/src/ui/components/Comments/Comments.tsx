@@ -24,7 +24,6 @@ export default function Comments({ tweetId }: { tweetId: string }) {
     useTextChange();
   const {
     comments,
-    loading,
     addNewComment,
     deleteUserComment,
     editUserComment,
@@ -55,25 +54,22 @@ export default function Comments({ tweetId }: { tweetId: string }) {
       });
   };
 
+  if (comments.length === 0) return null;
+
   return (
-<section className={styles.commentsContainer}>
-  {loading || comments.length === 0 ? null : (
-    <>
-      {comments.length >= 0 && (
-        <div className={styles.addCommentDiv}>
-          <textarea
-            value={message}
-            onChange={handleChange}
-            placeholder="Escribe un comentario"
-          />
-          <CharacterLimit message={message} MAX_CHARS={MAX_CHARS} />
-
-          <Button onClick={handleAddComment} disabled={isButtonDisabled}>
-            Comentar
-          </Button>
-        </div>
-      )}
-
+    <section className={styles.commentsContainer}>
+      <div className={styles.addCommentDiv}>
+        <textarea
+          value={message}
+          onChange={handleChange}
+          placeholder="Escribe un comentario"
+        />
+        <CharacterLimit message={message} MAX_CHARS={MAX_CHARS} />
+        <Button onClick={handleAddComment} disabled={isButtonDisabled}>
+          Comentar
+        </Button>
+      </div>
+  
       {comments.length === 0 ? (
         <p className={styles.noComments}>No hay comentarios</p>
       ) : (
@@ -118,9 +114,7 @@ export default function Comments({ tweetId }: { tweetId: string }) {
           </article>
         ))
       )}
-    </>
-  )}
-</section>
+    </section>
   );
 }
 

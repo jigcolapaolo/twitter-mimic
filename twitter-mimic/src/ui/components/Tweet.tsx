@@ -5,7 +5,7 @@ import useTimeAgo from "../../../hooks/useTimeAgo";
 import { Avatar } from "./Avatar";
 import styles from "@/ui/styles/home.module.css";
 import Link from "next/link";
-import { MouseEventHandler, useState } from "react";
+import { MouseEventHandler, useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
 import { LikeModalState, Timeline } from "@/lib/definitions";
 import TweetMenu from "./TweetMenu";
@@ -20,6 +20,12 @@ import { SyncLoader } from "react-spinners";
 import { Tooltip } from "react-tooltip";
 import useInfiniteScroll from "../../../hooks/useInfiniteScroll";
 import { FilterState } from "@/app/search/page";
+
+export interface IsRetweetModified {
+  id: string | undefined;
+  isRetweeted: boolean;
+  sharedCount: number;
+}
 
 export default function TweetClient({
   singleTimeline,
@@ -38,6 +44,15 @@ export default function TweetClient({
     id: undefined,
     usersLiked: [],
   });
+  const [isRetweetModified, setIsRetweetModified] = useState<IsRetweetModified>({
+    id: undefined,
+    isRetweeted: false,
+    sharedCount: 0,
+  });
+
+  const handleRetweetModified = useCallback((id: string | undefined, isRetweeted: boolean, sharedCount: number) => {
+    setIsRetweetModified({ id, isRetweeted, sharedCount });
+  }, [setIsRetweetModified]);
 
 
   return (
@@ -81,6 +96,9 @@ export default function TweetClient({
               setLikeModalState={setLikeModalState}
               isMenuOpen={isMenuOpen}
               setIsMenuOpen={setIsMenuOpen}
+              isRetweetModified={isRetweetModified}
+              handleRetweetModified={handleRetweetModified}
+
             />
           );
         })
@@ -104,6 +122,8 @@ interface TweetProps extends Omit<Timeline, "sharedId"> {
   setIsMenuOpen: React.Dispatch<React.SetStateAction<string | undefined>>;
   likeModalState: LikeModalState;
   setLikeModalState: React.Dispatch<React.SetStateAction<LikeModalState>>;
+  isRetweetModified: IsRetweetModified;
+  handleRetweetModified: (id: string | undefined, isRetweeted: boolean, sharedCount: number) => void;
 }
 
 function Tweet({
@@ -128,6 +148,8 @@ function Tweet({
   isRetweet,
   likeModalState,
   setLikeModalState,
+  isRetweetModified,
+  handleRetweetModified,
 }: TweetProps) {
   const timeago = useTimeAgo(createdAt);
   const router = useRouter();
@@ -188,7 +210,7 @@ function Tweet({
             </>
           )}
 
-          {isRetweet && sharedUserName && sharedAvatar && sharedCreatedAt && (
+          {(isRetweet && sharedUserName && sharedAvatar && sharedCreatedAt) && (
             <>
               <p
                 style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}
@@ -222,6 +244,8 @@ function Tweet({
           id={id}
           img={img}
           sharedCount={sharedCount}
+          isRetweetModified={isRetweetModified}
+          handleRetweetModified={handleRetweetModified}
         />
         {(likeModalState.id === id || loadingUsers) && (
           <UserListModal

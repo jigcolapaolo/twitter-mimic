@@ -1,4 +1,4 @@
-import { MouseEventHandler, useState } from "react";
+import { MouseEventHandler, useCallback, useState } from "react";
 import { toast } from "sonner";
 import { fetchUsersById } from "../firebase/client";
 import { LikeModalState } from "@/lib/definitions";
@@ -18,18 +18,18 @@ export default function useUserLike({
 }: UseUserLikeProps) {
   const [loadingUsers, setLoadingUsers] = useState(false);
 
-  const handleUserLike: MouseEventHandler<HTMLSpanElement> = async (e) => {
+  const handleUserLike: MouseEventHandler<HTMLSpanElement> = useCallback(async (e) => {
     e.preventDefault();
     e.stopPropagation();
-
+  
     if (likeModalState.id === id) {
       setLikeModalState({ id: undefined, usersLiked: [] });
       return;
     }
-
+  
     if (!usersLiked || usersLiked.length === 0) return;
     setLoadingUsers(true);
-
+  
     try {
       const users = await fetchUsersById(usersLiked);
       setLikeModalState({ id, usersLiked: users });
@@ -38,7 +38,7 @@ export default function useUserLike({
     } finally {
       setLoadingUsers(false);
     }
-  };
+  }, [id, usersLiked, likeModalState, setLikeModalState]);
 
   return {
     loadingUsers,

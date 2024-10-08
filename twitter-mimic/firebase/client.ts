@@ -246,7 +246,7 @@ export const retweet = async ({
       });
 
       await updateDoc(originalTweetSnap.ref, {
-        sharedCount: sharedCount - 1,
+        sharedCount: sharedCount === 0 ? 0 : sharedCount - 1,
       });
 
       const retweetQuery = query(
@@ -257,6 +257,15 @@ export const retweet = async ({
       const retweetSnap = await getDocs(retweetQuery);
       retweetSnap.forEach((doc) => deleteDoc(doc.ref));
     } else {
+
+      await updateDoc(userRef, {
+        sharedTweets: arrayUnion(sharedId),
+      });
+
+      await updateDoc(originalTweetSnap.ref, {
+        sharedCount: sharedCount + 1,
+      }); 
+
       await addDoc(tweetRef, {
         avatar,
         content,
@@ -269,13 +278,6 @@ export const retweet = async ({
         sharedId,
       });
 
-      await updateDoc(userRef, {
-        sharedTweets: arrayUnion(sharedId),
-      });
-
-      await updateDoc(originalTweetSnap.ref, {
-        sharedCount: sharedCount + 1,
-      });
     }
   } catch (error) {
     throw new Error("Error al hacer retweet");

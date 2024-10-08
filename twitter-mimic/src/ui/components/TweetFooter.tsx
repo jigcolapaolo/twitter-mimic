@@ -10,6 +10,7 @@ import { User } from "@/lib/definitions";
 import useLikeTweet from "../../../hooks/useLikeTweet";
 import { useRouter } from "next/navigation";
 import useUser from "../../../hooks/useUser";
+import { IsRetweetModified } from "./Tweet";
 
 interface TweetFooterProps {
   handleUserLike: MouseEventHandler;
@@ -21,6 +22,8 @@ interface TweetFooterProps {
   id: string;
   img: string;
   sharedCount: number;
+  isRetweetModified: IsRetweetModified;
+  handleRetweetModified: (id: string | undefined, isRetweeted: boolean, sharedCount: number) => void;
 }
 
 export default function TweetFooter({
@@ -33,6 +36,8 @@ export default function TweetFooter({
   id,
   img,
   sharedCount,
+  isRetweetModified,
+  handleRetweetModified,
 }: TweetFooterProps) {
   const router = useRouter();
   const user = useUser();
@@ -47,6 +52,8 @@ export default function TweetFooter({
     sharedCount,
     id,
     img,
+    isRetweetModified,
+    handleRetweetModified,
   });
 
   const handleCopyTweetLink: MouseEventHandler<HTMLButtonElement> = (e) => {
