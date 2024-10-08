@@ -27,6 +27,7 @@ export default function Comments({ tweetId }: { tweetId: string }) {
     addNewComment,
     deleteUserComment,
     editUserComment,
+    loading
   } = useComment({
     tweetId,
   });
@@ -54,7 +55,7 @@ export default function Comments({ tweetId }: { tweetId: string }) {
       });
   };
 
-  if (comments.length === 0) return null;
+  if (loading) return null;
 
   return (
     <section className={styles.commentsContainer}>

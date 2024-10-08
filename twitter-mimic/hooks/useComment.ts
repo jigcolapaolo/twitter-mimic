@@ -13,7 +13,7 @@ export default function useComment({
   tweetId: string | undefined;
 }) {
   const [comments, setComments] = useState<Comment[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!tweetId) return;
