@@ -1,5 +1,5 @@
 import { getDownloadURL, UploadTask } from "firebase/storage";
-import { DragEventHandler, useEffect, useState } from "react";
+import { DragEventHandler, MouseEventHandler, useEffect, useRef, useState } from "react";
 import { uploadImage } from "../firebase/client";
 
 export const DRAG_IMAGE_STATES = {
@@ -43,7 +43,12 @@ export default function useUploadImg() {
         }, 2000);
       };
 
-      const unsubscribe = task.on("state_changed", onProgress, onError, onComplete);
+      const unsubscribe = task.on(
+        "state_changed",
+        onProgress,
+        onError,
+        onComplete
+      );
 
       return () => {
         unsubscribe();
@@ -61,11 +66,33 @@ export default function useUploadImg() {
     setDrag(DRAG_IMAGE_STATES.NONE);
   };
 
-  const handleDrop: DragEventHandler<HTMLTextAreaElement> = (e) => {
-    e.preventDefault();
-    // console.log(e.dataTransfer.files[0])
-    setDrag(DRAG_IMAGE_STATES.NONE);
+  const handleDrop = (e: any) => {
     const file = e.dataTransfer.files[0];
+    setDrag(DRAG_IMAGE_STATES.NONE);
+    const task = uploadImage(file);
+    setTask(task);
+
+    // console.log(e.dataTransfer.files[0])
+  };
+
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  const handleFileChange = (e: any) => {
+    e.preventDefault();
+
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      const file = files[0];
+      uploadFromDialog(file);
+    }
+  };
+
+  const handleOpenFileDialog: MouseEventHandler<HTMLButtonElement> = (e) => {
+    e.preventDefault()
+    fileInputRef.current?.click();
+  };
+
+  const uploadFromDialog = (file: File) => {
     const task = uploadImage(file);
     setTask(task);
   };
@@ -78,5 +105,8 @@ export default function useUploadImg() {
     imgURL,
     setImgURL,
     uploadProgress,
+    fileInputRef,
+    handleFileChange,
+    handleOpenFileDialog,
   };
 }

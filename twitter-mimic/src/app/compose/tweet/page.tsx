@@ -14,16 +14,19 @@ import useUploadImg, {
 } from "../../../../hooks/useUploadImg";
 import ImgLoadingMsg from "@/ui/components/composeTweet/ImgLoadingMsg/ImgLoadingMsg";
 import CharacterLimit from "@/ui/components/composeTweet/CharacterLimit/CharacterLimit";
-import useTextChange, { MAX_CHARS, TEXT_STATES } from "../../../../hooks/useTextChange";
+import useTextChange, {
+  MAX_CHARS,
+  TEXT_STATES,
+} from "../../../../hooks/useTextChange";
 import ReturnButton from "@/ui/components/ReturnButton";
 import { AvatarSkeleton } from "@/ui/components/skeletons/AvatarSkeleton";
-
-
+import { CameraIcon } from "@/ui/icons/CameraIcon";
 
 export default function ComposeTweet() {
   const { push } = useRouter();
 
-  const { message, handleChange, isButtonDisabled, setStatus } = useTextChange();
+  const { message, handleChange, isButtonDisabled, setStatus } =
+    useTextChange();
   const user = useUser();
   const {
     drag,
@@ -33,8 +36,10 @@ export default function ComposeTweet() {
     handleDragEnter,
     handleDragLeave,
     handleDrop,
+    fileInputRef,
+    handleFileChange,
+    handleOpenFileDialog,
   } = useUploadImg();
-
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -54,7 +59,6 @@ export default function ComposeTweet() {
       });
   };
 
-
   return (
     <>
       <ReturnButton className={styles.svgButton}>
@@ -62,8 +66,11 @@ export default function ComposeTweet() {
       </ReturnButton>
       <section className={styles.section}>
         <figure className={styles.avatarSection}>
-          {user && user.avatar ? <Avatar src={user.avatar} alt={user.displayName} /> : 
-            <AvatarSkeleton />}
+          {user && user.avatar ? (
+            <Avatar src={user.avatar} alt={user.displayName} />
+          ) : (
+            <AvatarSkeleton />
+          )}
         </figure>
         <form className={styles.form} onSubmit={handleSubmit}>
           <textarea
@@ -84,6 +91,23 @@ export default function ComposeTweet() {
 
           <CharacterLimit message={message} MAX_CHARS={MAX_CHARS} />
 
+          <div className={styles.div}>
+            <button className={styles.svgButton} onClick={handleOpenFileDialog}>
+              <CameraIcon className={styles.svg} />
+            </button>
+            <Button
+              disabled={isButtonDisabled}
+              className={`${styles.button} w-1/4 tracking-widest`}
+            >
+              Tweet
+            </Button>
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleFileChange}
+              style={{ display: "none" }}
+            />
+          </div>
           {imgURL && (
             <section className={styles.imgSection}>
               <button
@@ -101,14 +125,6 @@ export default function ComposeTweet() {
               />
             </section>
           )}
-          <div className={styles.div}>
-            <Button
-              disabled={isButtonDisabled}
-              className={`${styles.button} w-1/4 tracking-widest`}
-            >
-              Tweet
-            </Button>
-          </div>
           <ImgLoadingMsg drag={drag} uploadProgress={uploadProgress} />
         </form>
       </section>

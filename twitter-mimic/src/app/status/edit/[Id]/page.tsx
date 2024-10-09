@@ -22,6 +22,7 @@ import useTextChange, {
   TEXT_STATES,
 } from "../../../../../hooks/useTextChange";
 import { AvatarSkeleton } from "@/ui/components/skeletons/AvatarSkeleton";
+import { CameraIcon } from "@/ui/icons/CameraIcon";
 
 export default function EditTweetPage({ params }: { params: { Id: string } }) {
   const { Id } = params;
@@ -39,6 +40,9 @@ export default function EditTweetPage({ params }: { params: { Id: string } }) {
     handleDragEnter,
     handleDragLeave,
     handleDrop,
+    fileInputRef,
+    handleFileChange,
+    handleOpenFileDialog,
   } = useUploadImg();
 
   useEffect(() => {
@@ -126,6 +130,24 @@ export default function EditTweetPage({ params }: { params: { Id: string } }) {
 
           <CharacterLimit message={message} MAX_CHARS={MAX_CHARS} />
 
+
+          <div className={styles.div}>
+            <button className={styles.svgButton} onClick={handleOpenFileDialog}>
+              <CameraIcon className={styles.svg} />
+            </button>
+            <Button
+              disabled={isButtonDisabled}
+              className={`${styles.button} w-1/4 tracking-widest`}
+            >
+              Tweet
+            </Button>
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleFileChange}
+              style={{ display: "none" }}
+            />
+          </div>
           {imgURL && (
             <section className={styles.imgSection}>
               <button
@@ -143,17 +165,6 @@ export default function EditTweetPage({ params }: { params: { Id: string } }) {
               />
             </section>
           )}
-          <div className={styles.div}>
-            <Button
-              disabled={
-                isButtonDisabled ||
-                (message === tweet?.content && imgURL === tweet?.img)
-              }
-              className={`${styles.button} w-2/5 tracking-widest`}
-            >
-              Modificar Tweet
-            </Button>
-          </div>
           <ImgLoadingMsg drag={drag} uploadProgress={uploadProgress} />
         </form>
       </section>
