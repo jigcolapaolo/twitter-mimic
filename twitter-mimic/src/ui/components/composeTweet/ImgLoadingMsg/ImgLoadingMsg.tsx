@@ -20,6 +20,7 @@ export default function ImgLoadingMsg({
       {drag === DRAG_IMAGE_STATES.ERROR &&
         "La imagen no pudo subirse, por favor intenta de nuevo"}
       {drag === DRAG_IMAGE_STATES.COMPLETE && "Imagen subida ✅"}
+      {drag === DRAG_IMAGE_STATES.ARRAYFULL && "Ya no puedes subir mas imagenes (5 max.)"}
     </section>
   );
 }

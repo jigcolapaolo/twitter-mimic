@@ -30,9 +30,9 @@ export default function ComposeTweet() {
   const user = useUser();
   const {
     drag,
-    imgURL,
+    imgURLs,
     uploadProgress,
-    setImgURL,
+    setImgURLs,
     handleDragEnter,
     handleDragLeave,
     handleDrop,
@@ -49,7 +49,7 @@ export default function ComposeTweet() {
       content: message,
       userId: user?.uid,
       userName: user?.displayName,
-      img: imgURL,
+      img: imgURLs,
     })
       .then(() => {
         push("/home");
@@ -108,24 +108,30 @@ export default function ComposeTweet() {
               style={{ display: "none" }}
             />
           </div>
-          {imgURL && (
-            <section className={styles.imgSection}>
-              <button
-                onClick={() => setImgURL(null)}
-                className={styles.imgButton}
-              >
-                X
-              </button>
-              <Image
-                src={imgURL}
-                alt="Image to Upload"
-                width={100}
-                height={100}
-                className={styles.img}
-              />
-            </section>
-          )}
           <ImgLoadingMsg drag={drag} uploadProgress={uploadProgress} />
+          {imgURLs.length > 0 && (
+            <div className={styles.imgContainer}>
+              {imgURLs.map((url, index) => (
+                <section key={index} className={styles.imgSection}>
+                  <button
+                    onClick={() =>
+                      setImgURLs((prev) => prev.filter((_, i) => i !== index))
+                    }
+                    className={styles.imgButton}
+                  >
+                    X
+                  </button>
+                  <Image
+                    src={url}
+                    alt="Image to Upload"
+                    width={100}
+                    height={100}
+                    className={styles.img}
+                  />
+                </section>
+              ))}
+            </div>
+          )}
         </form>
       </section>
     </>

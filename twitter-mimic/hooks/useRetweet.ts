@@ -8,7 +8,7 @@ interface UseRetweetProps {
   isShared: boolean;
   sharedCount: number;
   id: string;
-  img: string;
+  img: string[];
   isRetweetModified: IsRetweetModified;
   handleRetweetModified: (id: string | undefined, isRetweeted: boolean, sharedCount: number) => void;
 }

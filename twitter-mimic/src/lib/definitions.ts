@@ -10,7 +10,7 @@ export interface User {
 
 export interface Timeline {
   id: string;
-  img: string;
+  img: string[];
   avatar: string;
   userName: string;
   userId: string;

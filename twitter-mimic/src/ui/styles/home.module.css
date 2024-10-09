@@ -141,13 +141,6 @@
   color: gray;
 }
 
-.img {
-  height: auto;
-  width: 95%;
-  border-radius: 10px;
-  margin: 10px;
-}
-
 .nav {
   bottom: 0;
   border-top: 1px solid #eee;
@@ -322,7 +315,7 @@
 }
 
 
-/* Modal */
+/* Modals */
 
 .opacityOpen {
   opacity: 1;
@@ -343,6 +336,7 @@
   background-color: #475569;
   border-radius: 0.375rem;
   transition: opacity 0.2s ease-in-out;
+  z-index: 10;
 }
 
 .tweetMenuDiv > div button {

@@ -192,8 +192,13 @@ export const addTweet = async ({
   content: string | null | undefined;
   userId: string | null | undefined;
   userName: string | null | undefined;
-  img: string | null | undefined;
+  img: string[];
 }) => {
+
+  if (img.length > 5) {
+    throw new Error("No se pueden agregar mas de 5 imagenes");
+  }
+
   try {
     const tweetRef = collection(db, "tweets");
     await addDoc(tweetRef, {
@@ -223,7 +228,7 @@ export const retweet = async ({
   content: string | null | undefined;
   userId: string;
   userName: string | null | undefined;
-  img: string | null | undefined;
+  img: string[] | null | undefined;
   sharedId: string | undefined;
 }) => {
   const tweetRef = collection(db, "tweets");

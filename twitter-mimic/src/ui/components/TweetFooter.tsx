@@ -20,7 +20,7 @@ interface TweetFooterProps {
   isShared: boolean;
   userId: string;
   id: string;
-  img: string;
+  img: string[];
   sharedCount: number;
   isRetweetModified: IsRetweetModified;
   handleRetweetModified: (id: string | undefined, isRetweeted: boolean, sharedCount: number) => void;

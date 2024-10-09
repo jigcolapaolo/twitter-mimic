@@ -34,9 +34,9 @@ export default function EditTweetPage({ params }: { params: { Id: string } }) {
 
   const {
     drag,
-    imgURL,
+    imgURLs,
     uploadProgress,
-    setImgURL,
+    setImgURLs,
     handleDragEnter,
     handleDragLeave,
     handleDrop,
@@ -57,14 +57,14 @@ export default function EditTweetPage({ params }: { params: { Id: string } }) {
       .then((data: Timeline) => {
         setTweet(data);
         setMessage(data.content);
-        setImgURL(data.img);
+        setImgURLs(data.img);
         setStatus(TEXT_STATES.SUCCESS);
       })
       .catch((err) => {
         console.error(err);
         push("/home");
       });
-  }, [Id, push, setImgURL, setMessage, setStatus]);
+  }, [Id, push, setImgURLs, setMessage, setStatus]);
 
   useEffect(() => {
     if (tweet && user && user?.uid !== tweet?.userId) push("/home");
@@ -81,7 +81,7 @@ export default function EditTweetPage({ params }: { params: { Id: string } }) {
       },
       body: JSON.stringify({
         content: message,
-        img: imgURL,
+        img: imgURLs,
       }),
     })
       .then((res) => {
@@ -106,8 +106,11 @@ export default function EditTweetPage({ params }: { params: { Id: string } }) {
       </ReturnButton>
       <section className={styles.section}>
         <figure className={styles.avatarSection}>
-          {user && user.avatar ? <Avatar src={user.avatar} alt={user.displayName} /> :
-           <AvatarSkeleton />}
+          {user && user.avatar ? (
+            <Avatar src={user.avatar} alt={user.displayName} />
+          ) : (
+            <AvatarSkeleton />
+          )}
         </figure>
         <form className={styles.form} onSubmit={handleSubmit}>
           <textarea
@@ -130,7 +133,6 @@ export default function EditTweetPage({ params }: { params: { Id: string } }) {
 
           <CharacterLimit message={message} MAX_CHARS={MAX_CHARS} />
 
-
           <div className={styles.div}>
             <button className={styles.svgButton} onClick={handleOpenFileDialog}>
               <CameraIcon className={styles.svg} />
@@ -139,7 +141,7 @@ export default function EditTweetPage({ params }: { params: { Id: string } }) {
               disabled={isButtonDisabled}
               className={`${styles.button} w-1/4 tracking-widest`}
             >
-              Tweet
+              Guardar
             </Button>
             <input
               type="file"
@@ -148,24 +150,30 @@ export default function EditTweetPage({ params }: { params: { Id: string } }) {
               style={{ display: "none" }}
             />
           </div>
-          {imgURL && (
-            <section className={styles.imgSection}>
-              <button
-                onClick={() => setImgURL(null)}
-                className={styles.imgButton}
-              >
-                X
-              </button>
-              <Image
-                src={imgURL}
-                alt="Image to Upload"
-                width={100}
-                height={100}
-                className={styles.img}
-              />
-            </section>
-          )}
           <ImgLoadingMsg drag={drag} uploadProgress={uploadProgress} />
+          {imgURLs.length > 0 && (
+            <div className={styles.imgContainer}>
+              {imgURLs.map((url, index) => (
+                <section key={index} className={styles.imgSection}>
+                  <button
+                    onClick={() =>
+                      setImgURLs((prev) => prev.filter((_, i) => i !== index))
+                    }
+                    className={styles.imgButton}
+                  >
+                    X
+                  </button>
+                  <Image
+                    src={url}
+                    alt="Image to Upload"
+                    width={100}
+                    height={100}
+                    className={styles.img}
+                  />
+                </section>
+              ))}
+            </div>
+          )}
         </form>
       </section>
     </>

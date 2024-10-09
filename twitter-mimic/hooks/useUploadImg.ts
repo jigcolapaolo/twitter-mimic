@@ -3,6 +3,7 @@ import { DragEventHandler, MouseEventHandler, useEffect, useRef, useState } from
 import { uploadImage } from "../firebase/client";
 
 export const DRAG_IMAGE_STATES = {
+  ARRAYFULL: -2,
   ERROR: -1,
   NONE: 0,
   DRAG_OVER: 1,
@@ -13,7 +14,7 @@ export const DRAG_IMAGE_STATES = {
 export default function useUploadImg() {
   const [drag, setDrag] = useState<number>(DRAG_IMAGE_STATES.NONE);
   const [task, setTask] = useState<UploadTask | null>(null);
-  const [imgURL, setImgURL] = useState<string | null>(null);
+  const [imgURLs, setImgURLs] = useState<string[]>([]);
   const [uploadProgress, setUploadProgress] = useState<number>(0);
 
   useEffect(() => {
@@ -30,7 +31,7 @@ export default function useUploadImg() {
       const onComplete = () => {
         // Obtengo la url de la imagen cargada para mostrarla
         getDownloadURL(task.snapshot.ref).then((url) => {
-          setImgURL(url);
+          setImgURLs(prev => [...prev, url]);
         });
 
         setDrag(DRAG_IMAGE_STATES.COMPLETE);
@@ -67,6 +68,7 @@ export default function useUploadImg() {
   };
 
   const handleDrop = (e: any) => {
+    if (imgURLs.length >= 5) return setDrag(DRAG_IMAGE_STATES.ARRAYFULL);
     const file = e.dataTransfer.files[0];
     setDrag(DRAG_IMAGE_STATES.NONE);
     const task = uploadImage(file);
@@ -79,22 +81,20 @@ export default function useUploadImg() {
 
   const handleFileChange = (e: any) => {
     e.preventDefault();
+    if (imgURLs.length >= 5) return setDrag(DRAG_IMAGE_STATES.ARRAYFULL);
 
     const files = e.target.files;
     if (files && files.length > 0) {
       const file = files[0];
-      uploadFromDialog(file);
+      const task = uploadImage(file);
+      setTask(task);
     }
   };
 
   const handleOpenFileDialog: MouseEventHandler<HTMLButtonElement> = (e) => {
     e.preventDefault()
+    if (imgURLs.length >= 5) return setDrag(DRAG_IMAGE_STATES.ARRAYFULL);
     fileInputRef.current?.click();
-  };
-
-  const uploadFromDialog = (file: File) => {
-    const task = uploadImage(file);
-    setTask(task);
   };
 
   return {
@@ -102,8 +102,8 @@ export default function useUploadImg() {
     handleDragEnter,
     handleDragLeave,
     handleDrop,
-    imgURL,
-    setImgURL,
+    imgURLs,
+    setImgURLs,
     uploadProgress,
     fileInputRef,
     handleFileChange,

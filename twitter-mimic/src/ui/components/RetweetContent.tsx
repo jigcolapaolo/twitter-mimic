@@ -1,12 +1,12 @@
 import Link from "next/link";
 import { Avatar } from "./Avatar";
 import styles from "@/ui/styles/home.module.css";
-import Image from "next/image";
 import useTimeAgo from "../../../hooks/useTimeAgo";
+import TweetImages from "./TweetImages/TweetImages";
 
 interface RetweetContentProps {
   id: string;
-  img: string;
+  img: string[];
   sharedAvatar: string;
   sharedUserName: string;
   content: string;
@@ -49,16 +49,7 @@ export default function RetweetContent({
       </div>
 
       {img && (
-        <Image
-          priority
-          placeholder="blur"
-          blurDataURL={img}
-          className={styles.img}
-          width={300}
-          height={300}
-          src={img}
-          alt="Tweet Image"
-        />
+        <TweetImages img={img} />
       )}
     </section>
   );

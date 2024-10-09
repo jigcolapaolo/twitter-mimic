@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import useTimeAgo from "../../../hooks/useTimeAgo";
 import { Avatar } from "./Avatar";
 import styles from "@/ui/styles/home.module.css";
@@ -20,6 +19,7 @@ import { SyncLoader } from "react-spinners";
 import { Tooltip } from "react-tooltip";
 import useInfiniteScroll from "../../../hooks/useInfiniteScroll";
 import { FilterState } from "@/app/search/page";
+import TweetImages from "./TweetImages/TweetImages";
 
 export interface IsRetweetModified {
   id: string | undefined;
@@ -196,16 +196,7 @@ function Tweet({
             <>
               <p className={styles.p}>{content}</p>
               {img && (
-                <Image
-                  priority
-                  placeholder="blur"
-                  blurDataURL={img}
-                  className={styles.img}
-                  width={300}
-                  height={300}
-                  src={img}
-                  alt="Tweet Image"
-                />
+                <TweetImages img={img} />
               )}
             </>
           )}
