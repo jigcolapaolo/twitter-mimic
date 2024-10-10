@@ -18,6 +18,9 @@
     --dark: #0a0a0a;
     --primary-opacity: #0099ff33;
     --secondary-color: #1c5489;
+    --tertiary-color: #0099ff;
+    --quaternary-color: #005599;
+    --quinary-color: #33ccff;
     --first-color: hsl(var(--hue), 95%, 53%);
     --first-color-alt: hsl(var(--hue), 56%, 35%);
     --title-color: hsl(228, 8%, 95%);

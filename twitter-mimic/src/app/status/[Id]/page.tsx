@@ -14,7 +14,7 @@ interface TweetPageProps {
   Id: string;
 }
 
-export const revalidate = 60;
+export const revalidate = 30;
 
 export async function generateStaticParams() {
   const tweetIds = await fetchLatestTweets();

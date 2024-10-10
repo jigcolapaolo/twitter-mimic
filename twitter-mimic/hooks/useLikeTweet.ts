@@ -28,7 +28,7 @@ export default function useLikeTweet(
 
     setTimeout(() => {
       setIsAnimating(false);
-    }, 1500);
+    }, 500);
 
     if (user) {
       const previousLikedState = isTweetLiked;
