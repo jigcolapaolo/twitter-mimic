@@ -12,6 +12,9 @@ const config: Config = {
   testEnvironment: 'jsdom',
   // Add more setup options before each test is run
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
+  moduleNameMapper: {
+    '^next/image$': '<rootDir>/__mocks__/next/image.ts',
+  },
   preset: 'ts-jest',
 }
  
