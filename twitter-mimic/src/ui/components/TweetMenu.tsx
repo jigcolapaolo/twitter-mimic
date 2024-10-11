@@ -50,7 +50,7 @@ export default function TweetMenu({
 
   return (
     <div className={styles.tweetMenuDiv}>
-      <button onClick={handleMenuClick}>
+      <button onClick={handleMenuClick} aria-label="tweetMenuIcon">
         <MenuIcon />
       </button>
 
@@ -59,11 +59,11 @@ export default function TweetMenu({
           isMenuOpen === id ? styles.opacityOpen : styles.opacityClosed
         }`}
       >
-        <button onClick={handleEditClick}>
+        <button onClick={handleEditClick} aria-label="tweetEdit">
           <EditIcon />
           Editar Tweet
         </button>
-        <button onClick={handleDeleteClick}>
+        <button onClick={handleDeleteClick} aria-label="tweetDelete">
           <DeleteIcon />
           Eliminar Tweet
         </button>
