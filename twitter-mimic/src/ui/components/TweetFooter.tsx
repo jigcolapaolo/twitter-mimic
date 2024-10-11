@@ -76,11 +76,11 @@ export default function TweetFooter({
 
   return (
     <footer className={styles.footer}>
-      <button onClick={handleLikeTweet} className={`${styles.likeBtn} ${isAnimating ? styles.animate : ""}`}>
+      <button onClick={handleLikeTweet} aria-label="Like" className={`${styles.likeBtn} ${isAnimating ? styles.animate : ""}`}>
         {isTweetLiked ? <LikeIconFilled /> : <LikeIcon />}
         <span onClick={handleUserLike}>{likesCountState}</span>
       </button>
-      <button onClick={handleCommentTweet}>
+      <button onClick={handleCommentTweet} aria-label="Comment">
         <CommentIcon />
         <span>{commentsCount}</span>
       </button>
@@ -88,12 +88,13 @@ export default function TweetFooter({
         <button
           style={isSharedUi ? { backgroundColor: "#B0E0E6" } : {}}
           onClick={handleRetweet}
+          aria-label="Retweet"
         >
           <RetweetIcon />
           <span>{sharedCountUi}</span>
         </button>
       ) : null}
-      <button data-tooltip-id={id} data-tooltip-content="Copiar link" onClick={handleCopyTweetLink}>
+      <button data-tooltip-id={id} data-tooltip-content="Copiar link" aria-label="CopyLink" onClick={handleCopyTweetLink}>
         <ChainIcon />
       </button>
     </footer>
