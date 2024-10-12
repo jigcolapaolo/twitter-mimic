@@ -21,6 +21,7 @@ export default function SignoutModal({
       className={`${styles.section} ${
         isModalOpen ? styles.opacityOpen : styles.opacityClosed
       }`}
+      aria-label="SignoutModal"
     >
       <div className={styles.modalContent}>
         <p>¿Cerrar Sesión?</p>
