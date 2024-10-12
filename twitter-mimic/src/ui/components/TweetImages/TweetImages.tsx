@@ -49,7 +49,7 @@ export default function TweetImages({ img }: { img: string[] | string }) {
 function CustomNextArrow(props: any) {
   const { className, style, onClick } = props;
   return (
-    <div
+    <button
       className={className}
       style={{
         ...style,
@@ -68,7 +68,7 @@ function CustomNextArrow(props: any) {
 function CustomPrevArrow(props: any) {
   const { className, style, onClick } = props;
   return (
-    <div
+    <button
       className={className}
       style={{
         ...style,
