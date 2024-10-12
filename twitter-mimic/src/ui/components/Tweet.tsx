@@ -167,7 +167,7 @@ function Tweet({
   };
 
   return (
-    <article key={id} className={styles.article} onClick={handleArticleClick}>
+    <article key={id} className={styles.article} onClick={handleArticleClick} aria-label="Tweet">
       <section className={styles.tweetContentInfo}>
         <figure className={styles.avatarDiv}>
           <Avatar src={avatar} alt={userName} />

@@ -2,15 +2,14 @@ import TweetClient from "@/ui/components/Tweet";
 import useUser from "../../../hooks/useUser";
 import useTimeline from "../../../hooks/useTimeline";
 import useInfiniteScroll from "../../../hooks/useInfiniteScroll";
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
+import { useRouter } from "next/navigation";
 
 jest.mock("../../../hooks/useUser");
 jest.mock("../../../hooks/useTimeline");
 jest.mock("../../../hooks/useInfiniteScroll");
 jest.mock("next/navigation", () => ({
-  useRouter: jest.fn(() => ({
-    push: jest.fn(),
-  })),
+  useRouter: jest.fn(),
 }));
 jest.mock("react-spinners", () => ({
   SyncLoader: jest.fn(() => <div>Loading...</div>),
@@ -130,12 +129,43 @@ describe("TweetClient component", () => {
       retweets: [],
       loading: false,
       isFetchingMore: true,
-      handleLoadMore: jest.fn()
-    })
+      handleLoadMore: jest.fn(),
+    });
 
-    render(<TweetClient singleTimeline={[]} />)
+    render(<TweetClient singleTimeline={[]} />);
 
-    expect(screen.getByText("Loading...")).toBeInTheDocument()
-  })
+    expect(screen.getByText("Loading...")).toBeInTheDocument();
+  });
 
+  it("should redirect to tweet status page when tweet is clicked", () => {
+    const mockPush = jest.fn();
+    (useRouter as jest.Mock).mockReturnValue({ push: mockPush });
+  
+    (useTimeline as jest.Mock).mockReturnValue({
+      timeline: [
+        {
+          id: "1",
+          userName: "Juan",
+          content: "Hola mundo",
+          likesCount: 5,
+          sharedCount: 2,
+          createdAt: 2321231232,
+          avatar: "avatar.jpg",
+          img: null,
+          usersLiked: [],
+          usersComments: [],
+        },
+      ],
+      retweets: [],
+      loading: false,
+      isFetchingMore: false,
+      handleLoadMore: jest.fn(),
+    });
+  
+    render(<TweetClient singleTimeline={[]} />);
+  
+    fireEvent.click(screen.getByRole("article", { name: "Tweet" }));
+  
+    expect(mockPush).toHaveBeenCalledWith("/status/1");
+  });
 });
