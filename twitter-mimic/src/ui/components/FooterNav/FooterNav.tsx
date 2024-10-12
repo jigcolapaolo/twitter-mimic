@@ -11,13 +11,13 @@ export default function FooterNav() {
 
   return (
     <nav className={styles.nav}>
-      <Link href="/home" className={ pathname === "/home" ? styles.selectedNav : ""}>
+      <Link href="/home" className={ pathname === "/home" ? styles.selectedNav : ""} aria-label="HomeLink">
         <HomeIcon width={32} height={32} stroke="#09f" />
       </Link>
-      <Link href="/search" className={ pathname === "/search" ? styles.selectedNav : ""}>
+      <Link href="/search" className={ pathname === "/search" ? styles.selectedNav : ""} aria-label="SearchLink">
         <SearchIcon width={32} height={32} stroke="#09f" />
       </Link>
-      <Link href="/compose/tweet">
+      <Link href="/compose/tweet" aria-label="ComposeLink">
         <CreateIcon width={32} height={32} stroke="#09f" />
       </Link>
     </nav>
