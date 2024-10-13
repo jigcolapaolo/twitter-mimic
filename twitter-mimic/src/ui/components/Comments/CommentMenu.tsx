@@ -51,7 +51,7 @@ export default function CommentMenu({
 
     return (
     <div className={styles.commentMenuDiv}>
-      <button onClick={handleMenuClick}>
+      <button onClick={handleMenuClick} aria-label="CommentMenuBtn">
         <MenuIcon />
       </button>
 
