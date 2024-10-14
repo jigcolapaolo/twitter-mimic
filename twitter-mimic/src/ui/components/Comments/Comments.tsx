@@ -43,16 +43,14 @@ export default function Comments({ tweetId }: { tweetId: string }) {
     if (!message || message.length === 0 || !user) return;
 
     setStatus(TEXT_STATES.LOADING);
-    await addNewComment({ message, user })
-      .then(() => {
-        setMessage("");
-      })
-      .catch(() => {
-        toast.error("Error al agregar el comentario");
-      })
-      .finally(() => {
-        setStatus(TEXT_STATES.NONE);
-      });
+    try {
+      await addNewComment({ message, user });
+      setMessage("");
+    } catch (error) {
+      toast.error("Error al agregar el comentario");
+    } finally {
+      setStatus(TEXT_STATES.NONE);
+    }
   };
 
   if (loading) return null;

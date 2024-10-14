@@ -45,7 +45,10 @@ export default function useComment({
 
       const updatedComments = await fetchLatestTweetComments(tweetId);
       setComments(updatedComments);
-    } catch (error) {}
+      return true
+    } catch (error) {
+      return false
+    }
   };
 
   const deleteUserComment = async ({
