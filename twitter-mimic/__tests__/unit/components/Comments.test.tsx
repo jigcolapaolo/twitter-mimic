@@ -1,0 +1,1 @@
+import Comments from "@/ui/components/Comments/Comments";
