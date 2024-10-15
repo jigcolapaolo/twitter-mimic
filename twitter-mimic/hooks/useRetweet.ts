@@ -58,7 +58,7 @@ export default function useRetweet({
 
 
       } catch (error) {
-        toast.error("Error al retwittear" + error);
+        toast.error("Error al retwittear");
         setSharedCountUi((prev) => (isSharedUi ? prev + 1 : prev === 0 ? 0 : prev - 1));
         setIsSharedUi((prev) => !prev);
       }
