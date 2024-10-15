@@ -66,6 +66,4 @@ describe("useTimeAgo", () => {
 
         expect(result.current).toMatch("hace 6 minutos")
     })
-
-    // npm test "useTimeAgo.test.ts"
 })
