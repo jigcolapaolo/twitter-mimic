@@ -34,13 +34,13 @@ const getDateDiffs = (timestamp: number) => {
 };
 
 // También se puede usar una estrategia similar para controlar la inactividad del usuario
-export default function useTimeAgo(timestamp: number) {
+export default function useTimeAgo(timestamp: number | null) {
   const [timeago, setTimeago] = useState(timestamp == null ? () => ({ value: -1, unit: "second" }) : getDateDiffs(timestamp));
 
   useEffect(() => {
     if (isRelativeTimeFormatSupported) {
       const interval = setInterval(() => {
-        const newTimeAgo = getDateDiffs(timestamp);
+        const newTimeAgo = getDateDiffs(timestamp || 0);
         setTimeago(newTimeAgo);
       }, 5000);
 
@@ -49,7 +49,7 @@ export default function useTimeAgo(timestamp: number) {
   }, [timestamp]);
 
   if (!isRelativeTimeFormatSupported) {
-    return formatDate(timestamp);
+    return formatDate(timestamp || 0);
   }
 
   const rtf = new Intl.RelativeTimeFormat("es", { style: "long" });
