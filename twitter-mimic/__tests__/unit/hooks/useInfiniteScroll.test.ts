@@ -16,5 +16,4 @@ describe("useInfiniteScroll", () => {
         expect(result.current.sectionRef).toBeDefined()
         expect(result.current.sectionRef.current).toBeNull()
     })
-
 })
