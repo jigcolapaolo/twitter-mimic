@@ -67,7 +67,7 @@ export default function SearchFilters({
     setFilteredUsers(undefined);
     onFilterChange(TWEET_FILTER.TOP, undefined);
   };
-  
+
   return (
     <>
       <section className={styles.filterSection}>

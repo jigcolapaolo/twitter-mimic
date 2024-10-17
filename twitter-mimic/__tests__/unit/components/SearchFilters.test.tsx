@@ -35,7 +35,7 @@ describe("SearchFilters component", () => {
 
         expect(onFilterChangeMock).toHaveBeenCalledWith(TWEET_FILTER.RECENT, undefined)
     })
-
+    
     it("should update searchQuery state when input changes", () => {
         render(<SearchFilters {...defaultProps} />)
 
