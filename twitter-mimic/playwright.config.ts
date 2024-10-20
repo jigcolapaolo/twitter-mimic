@@ -35,6 +35,18 @@ export default defineConfig({
   /* Configure projects for major browsers */
   projects: [
     {
+      name: 'setup',
+      testMatch: '**/*.setup.ts',
+    },
+    {
+      name: 'e2e tests logged in',
+      testMatch: '**/*loggedin.spec.ts',
+      dependencies: ['setup'],
+      use: {
+        storageState: 'playwright/.auth/loginState.json',
+      }
+    },
+    {
       name: "chromium",
       use: { ...devices["Desktop Chrome"] },
       testMatch: [

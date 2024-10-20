@@ -2,7 +2,7 @@ import * as React from "react";
 import { SVGProps } from "react";
 export default function SignOutIcon (props: SVGProps<SVGSVGElement>) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 21 21" width={21} height={21} {...props}>
+    <svg id="sign-out-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 21 21" width={21} height={21} {...props}>
       <g
         fill={props.fill}
         fillRule="evenodd"
