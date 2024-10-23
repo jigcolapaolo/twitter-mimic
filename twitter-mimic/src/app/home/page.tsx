@@ -12,7 +12,7 @@ export const metadata = {
 export default function HomePage() {
 
   return (
-    <section className={styles.section}>
+    <section className={styles.section} aria-label="tweet-section">
         <TweetClient />
     </section>
   );

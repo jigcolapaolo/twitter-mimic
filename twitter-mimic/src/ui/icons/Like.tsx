@@ -4,6 +4,7 @@ import { SVGProps } from "react";
 export function LikeIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <svg
+      aria-label="like-icon"
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 512 512"
       width={21}
@@ -18,6 +19,7 @@ export function LikeIcon(props: SVGProps<SVGSVGElement>) {
 export function LikeIconFilled(props: SVGProps<SVGSVGElement>) {
   return (
     <svg
+      aria-label="like-icon-filled"
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 512 512"
       width={21}

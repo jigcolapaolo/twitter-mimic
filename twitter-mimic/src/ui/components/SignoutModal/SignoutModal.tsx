@@ -26,7 +26,7 @@ export default function SignoutModal({
       <div className={styles.modalContent}>
         <p>¿Cerrar Sesión?</p>
         <div className={styles.divBtns}>
-          <button onClick={handleSignOut}>Si</button>
+          <button aria-label="SignoutYes" onClick={handleSignOut}>Si</button>
           <button onClick={() => setIsModalOpen(!isModalOpen)}>No</button>
         </div>
       </div>

@@ -151,7 +151,7 @@ export default function EditTweetPage({ params }: { params: { Id: string } }) {
             />
           </div>
           <ImgLoadingMsg drag={drag} uploadProgress={uploadProgress} />
-          {imgURLs.length > 0 && (
+          {imgURLs && imgURLs.length > 0 && (
             <div className={styles.imgContainer}>
               {imgURLs.map((url, index) => (
                 <section key={index} className={styles.imgSection}>

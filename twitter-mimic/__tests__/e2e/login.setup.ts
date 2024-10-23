@@ -33,6 +33,7 @@ test.describe("Login flow", () => {
       const popup = await page.waitForEvent("popup");
       await popup.waitForLoadState("networkidle");
 
+      // Enter credentials to login, they will be stored in the auth file and used in subsequent tests
       await popup
         .getByRole("textbox", { name: /Username or email address/i })
         .fill("");

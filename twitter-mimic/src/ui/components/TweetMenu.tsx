@@ -58,6 +58,7 @@ export default function TweetMenu({
         className={`${
           isMenuOpen === id ? styles.opacityOpen : styles.opacityClosed
         }`}
+        aria-label="tweetMenu"
       >
         <button onClick={handleEditClick} aria-label="tweetEdit">
           <EditIcon />

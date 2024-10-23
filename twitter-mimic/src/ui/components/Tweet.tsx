@@ -194,7 +194,7 @@ function Tweet({
 
           {!isRetweet && (
             <>
-              <p className={styles.p}>{content}</p>
+              <p aria-label="Tweet Content" className={styles.p}>{content}</p>
               {img && (
                 <TweetImages img={img} />
               )}
