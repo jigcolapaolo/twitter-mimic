@@ -17,6 +17,7 @@ export default function ReturnButton({
         className={className}
         {...rest}
         onClick={() => window.history.back()}
+        aria-label="return-button"
       >
         {children}
       </button>

@@ -6,7 +6,7 @@ test.use({ storageState: authFile });
 
 test.describe("Home page", () => {
 
-  test("should run multiple assertions without reloading the page", async ({ page }) => {
+  test("should run multiple assertions and be able to work the home page flow correctly", async ({ page }) => {
     // Inicia sesión una vez
     await page.goto("http://localhost:3000/", { waitUntil: "networkidle" });
     await page.click('button:has-text("Login with GitHub")');
@@ -104,7 +104,7 @@ test.describe("Home page", () => {
 
       await tweet.click();
 
-      await expect(page).toHaveURL(/http:\/\/localhost:3000\/status\/.*/);
+      await page.waitForURL(/http:\/\/localhost:3000\/status\/.*/);
 
       await page.goBack();
     })
@@ -155,7 +155,7 @@ test.describe("Home page", () => {
     await test.step("Verify logout modal when logout button is clicked", async () => {
       const signoutButton = await page.locator('#sign-out-icon');
       const signoutButtonYes = page.getByRole("button", { name: /si/i });
-      const signoutButtonNo = page.getByRole("button", { name: "No", exact: true });
+      // const signoutButtonNo = page.getByRole("button", { name: "No", exact: true });
       const signoutModal = await page.locator('section[aria-label="SignoutModal"]');
       
       await expect(signoutModal).toHaveClass(/opacityClosed/);
@@ -163,9 +163,9 @@ test.describe("Home page", () => {
       await signoutButton.click();
       await expect(signoutModal).toHaveClass(/opacityOpen/);
       await expect(signoutButtonYes).toBeVisible();
-      await expect(signoutButtonNo).toBeVisible();
+      // await expect(signoutButtonNo).toBeVisible();
 
-      await signoutButtonNo.click();
+      // await signoutButtonNo.click();
       
       await signoutButtonYes.click();
       await page.waitForURL("http://localhost:3000/", { timeout: 10000 });

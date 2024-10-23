@@ -49,7 +49,7 @@ export default function TweetMenu({
   }
 
   return (
-    <div className={styles.tweetMenuDiv}>
+    <div className={styles.tweetMenuDiv} aria-label="tweetMenuDiv">
       <button onClick={handleMenuClick} aria-label="tweetMenuIcon">
         <MenuIcon />
       </button>
