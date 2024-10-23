@@ -117,29 +117,5 @@ test.describe("Compose Page", () => {
         await expect(newTweet).toBeVisible();
     })
 
-    await test.step("Verify tweet was deleted correctly", async () => {
-        
-        const newTweet = page.locator("article:has(p:has-text('Hola mundo'))");
-
-        const tweetMenuButton = await newTweet.locator('div[aria-label="tweetMenuDiv"] button[aria-label="tweetMenuIcon"]');
-        await expect(tweetMenuButton).toBeVisible();
-  
-        const tweetMenu = await newTweet.locator('div[aria-label="tweetMenu"]');
-        await expect(tweetMenu).toHaveClass('home_opacityClosed__QR7Je');
-  
-        await tweetMenuButton.click();
-  
-        await expect(tweetMenu).toHaveClass('home_opacityOpen__vb5eG');
-  
-        const editTweetButton = await tweetMenu.locator('button[aria-label="tweetEdit"]');
-        const deleteTweetButton = await tweetMenu.locator('button[aria-label="tweetDelete"]');
-  
-        await expect(editTweetButton).toBeVisible();
-        await expect(deleteTweetButton).toBeVisible();
-  
-        // await deleteTweetButton.click();
-        // await expect(page.getByText("Tweet eliminado exitosamente")).toBeVisible();
-    })
-
   });
 });

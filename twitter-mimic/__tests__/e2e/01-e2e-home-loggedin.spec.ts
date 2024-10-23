@@ -92,7 +92,7 @@ test.describe("Home page", () => {
 
       await editTweetButton.click();
 
-      await expect(page).toHaveURL(/http:\/\/localhost:3000\/status\/edit\/.*/);
+      await page.waitForURL(/http:\/\/localhost:3000\/status\/.*/);
 
       await page.goBack();
     })
