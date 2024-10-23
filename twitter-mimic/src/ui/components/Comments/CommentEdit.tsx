@@ -55,7 +55,7 @@ export default function CommentEdit({
   };
 
   return (
-    <div className={styles.addCommentDiv}>
+    <div className={styles.addCommentDiv} aria-label="EditCommentDiv">
       <textarea
         value={message}
         onChange={handleChange}

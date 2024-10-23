@@ -50,7 +50,7 @@ export default function CommentMenu({
     }
 
     return (
-    <div className={styles.commentMenuDiv}>
+    <div className={styles.commentMenuDiv} aria-label="CommentMenuDiv">
       <button onClick={handleMenuClick} aria-label="CommentMenuBtn">
         <MenuIcon />
       </button>
@@ -59,6 +59,7 @@ export default function CommentMenu({
         className={`${
           isMenuOpen === id ? styles.opacityOpen : styles.opacityClosed
         }`}
+        aria-label="CommentMenuModal"
       >
         <button onClick={handleEditClick}>
           <EditIcon />
