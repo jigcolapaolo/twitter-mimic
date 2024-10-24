@@ -5,14 +5,27 @@ import useUploadImg, { DRAG_IMAGE_STATES } from "../../hooks/useUploadImg";
 import { addTweet } from "../../firebase/client";
 
 const mockPush = jest.fn();
-const mockSetStatus = jest.fn();
-const mockHandleChange = jest.fn();
-const mockSetImgURLs = jest.fn();
-const mockHandleDragEnter = jest.fn();
-const mockHandleDragLeave = jest.fn();
-const mockHandleDrop = jest.fn();
-const mockHandleFileChange = jest.fn();
-const mockHandleOpenFileDialog = jest.fn();
+
+const defaultMessage = {
+  message: "",
+  handleChange: jest.fn(),
+  isButtonDisabled: true,
+  setStatus: jest.fn(),
+};
+
+const defaultUploadImg = {
+  drag: DRAG_IMAGE_STATES.NONE,
+  imgURLs: [],
+  uploadProgress: 0,
+  setImgURLs: jest.fn(),
+  handleDragEnter: jest.fn(),
+  handleDragLeave: jest.fn(),
+  handleDrop: jest.fn(),
+  handleFileChange: jest.fn(),
+  handleOpenFileDialog: jest.fn(),
+};
+
+
 
 
 jest.mock("next/navigation", () => ({
@@ -37,10 +50,7 @@ jest.mock("../../hooks/useUser", () => ({
 jest.mock("../../hooks/useTextChange", () => ({
   __esModule: true,
   default: jest.fn(() => ({
-    message: "",
-    handleChange: mockHandleChange,
-    isButtonDisabled: true,
-    setStatus: mockSetStatus,
+    ...defaultMessage,
   })),
   TEXT_STATES: {
     NONE: 0,
@@ -52,15 +62,7 @@ jest.mock("../../hooks/useTextChange", () => ({
 jest.mock("../../hooks/useUploadImg", () => ({
   __esModule: true,
   default: jest.fn(() => ({
-    drag: DRAG_IMAGE_STATES.NONE,
-    imgURLs: [],
-    uploadProgress: 0,
-    setImgURLs: mockSetImgURLs,
-    handleDragEnter: mockHandleDragEnter,
-    handleDragLeave: mockHandleDragLeave,
-    handleDrop: mockHandleDrop,
-    handleFileChange: mockHandleFileChange,
-    handleOpenFileDialog: mockHandleOpenFileDialog,
+    ...defaultUploadImg,
   })),
   DRAG_IMAGE_STATES: {
     NONE: 0,
@@ -89,11 +91,13 @@ describe("ComposeTweet integration", () => {
   });
 
   it("should enable tweet button when message is not empty", () => {
-      (useTextChange as jest.Mock).mockReturnValue({
+      const defaultMessageWithMessage = {
+        ...defaultMessage,
         message: "Hola mundo",
-        handleChange: mockHandleChange,
         isButtonDisabled: false,
-        setStatus: mockSetStatus,
+      };
+      (useTextChange as jest.Mock).mockReturnValue({
+        ...defaultMessageWithMessage
       });
 
     render(<ComposeTweet />);
@@ -102,16 +106,13 @@ describe("ComposeTweet integration", () => {
   })
 
   it("should display an image when an image is dropped", () => {
+    const defaultUploadImgWithImage = {
+      ...defaultUploadImg,
+      imgURLs: ["image.png"],
+    };
+
     (useUploadImg as jest.Mock).mockReturnValue({
-        drag: DRAG_IMAGE_STATES.NONE,
-        imgURLs: ["image.png"],
-        uploadProgress: 0,
-        setImgURLs: mockSetImgURLs,
-        handleDragEnter: mockHandleDragEnter,
-        handleDragLeave: mockHandleDragLeave,
-        handleDrop: mockHandleDrop,
-        handleFileChange: mockHandleFileChange,
-        handleOpenFileDialog: mockHandleOpenFileDialog,
+      ...defaultUploadImgWithImage
     })
 
     render(<ComposeTweet />);
@@ -121,11 +122,14 @@ describe("ComposeTweet integration", () => {
   })
 
   it("should submit the tweet and redirect to /home", async () => {
+    const defaultMessageWithMessage = {
+      ...defaultMessage,
+      message: "Hola mundo",
+      isButtonDisabled: false,
+    };
+
     (useTextChange as jest.Mock).mockReturnValue({
-        message: "Hola mundo",
-        handleChange: mockHandleChange,
-        isButtonDisabled: false,
-        setStatus: mockSetStatus,
+        ...defaultMessageWithMessage
       });
       
       (addTweet as jest.Mock).mockResolvedValue(Promise.resolve());
@@ -146,7 +150,4 @@ describe("ComposeTweet integration", () => {
   
       expect(mockPush).toHaveBeenCalledWith("/home");
   })
-
 });
-
-// npm test "Compose.integration.test.tsx"
