@@ -25,7 +25,7 @@ jest.mock("../../hooks/useUser", () => ({
       GOOGLE: 2,
     }
   }));
-
+  
   jest.mock("next/navigation", () => ({
     useRouter: jest.fn().mockImplementation(() => ({
       push: mockPush
