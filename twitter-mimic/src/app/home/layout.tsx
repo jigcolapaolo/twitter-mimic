@@ -17,7 +17,7 @@ export default function HomeLayout({
 
   return (
     <>
-      <header className={styles.header}>
+      <header className={styles.header} data-testid="home-layout">
         <Link href={"/home"}>
           <Image
             priority

@@ -47,23 +47,19 @@ describe("useUser", () => {
     })
 
     it("should subscribe and unsubscribe onAuthStateChanged", () => {
-        const unsubscribeMock = jest.fn(); // Mock de la función de desuscripción
+        const unsubscribeMock = jest.fn();
 
-        // "onAuthStateChanged" devuelva el "unsubscribeMock"
         (onAuthStateChanged as jest.Mock).mockImplementation((callback) => {
-            callback(undefined); // Simula que no hay usuario
+            callback(undefined);
             return unsubscribeMock;
         });
     
         const { unmount } = renderHook(() => useUser());
     
-        // Se verifica que "onAuthStateChanged" se haya llamado una vez
         expect(onAuthStateChanged).toHaveBeenCalled();
     
-        // Se desmonta el hook para probar la desuscripción
         unmount();
     
-        // Se verifica que se haya llamado a la función de desuscripción una vez
         expect(unsubscribeMock).toHaveBeenCalledTimes(1);
     })
 

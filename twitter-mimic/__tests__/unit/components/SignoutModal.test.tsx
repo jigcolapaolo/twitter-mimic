@@ -35,7 +35,7 @@ describe("SignoutModal", () => {
     it("should not be seen when clicked on no button", () => {
         render(<SignoutModal isModalOpen={true} setIsModalOpen={setIsModalOpenMock} />)
 
-        fireEvent.click(screen.getByRole("button", { name: /no/i }))
+        fireEvent.click(screen.getByRole("button", { name: "No" }))
         expect(setIsModalOpenMock).toHaveBeenCalledWith(false)
 
         render(<SignoutModal isModalOpen={false} setIsModalOpen={setIsModalOpenMock} />);

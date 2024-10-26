@@ -8,7 +8,9 @@
     "start": "next start",
     "lint": "next lint",
     "test": "jest",
-    "test:watch": "jest --watch"
+    "testAll": "jest __tests__/unit __tests__/integration",
+    "test:watch": "jest --watch __tests__/unit __tests__/integration",
+    "test:coverage": "jest --coverage __tests__/unit __tests__/integration"
   },
   "dependencies": {
     "firebase": "^10.13.1",

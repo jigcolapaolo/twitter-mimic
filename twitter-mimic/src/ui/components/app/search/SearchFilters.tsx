@@ -70,7 +70,7 @@ export default function SearchFilters({
 
   return (
     <>
-      <section className={styles.filterSection}>
+      <section className={styles.filterSection} data-testid="search-filters">
         <div className={styles.searchDiv}>
           <div>
             <SearchIcon />
