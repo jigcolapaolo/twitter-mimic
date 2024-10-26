@@ -48,7 +48,7 @@ describe("useSearchUsers", () => {
     it("should show error message if fetchUsersByQuery fails", async () => {
         (fetchUsersByQuery as jest.Mock).mockRejectedValueOnce(new Error("Error al obtener usuarios"))
 
-        const { result } = renderHook(() => useSearchUsers({ searchQuery: "Matt" }))
+        renderHook(() => useSearchUsers({ searchQuery: "Matt" }))
 
         await waitFor(() => {
             expect(toast.error).toHaveBeenCalledWith("Error al obtener los usuarios")
