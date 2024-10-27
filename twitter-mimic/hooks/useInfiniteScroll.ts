@@ -1,31 +1,30 @@
 import { useEffect, useRef } from "react";
 
-export default function useInfiniteScroll({ handleLoadMore }: any) {
-  const sectionRef = useRef<HTMLDivElement>(null)
+interface UseInfiniteScrollProps {
+  handleLoadMore: () => void;
+}
 
+export default function useInfiniteScroll({ handleLoadMore }: UseInfiniteScrollProps) {
+  const sectionRef = useRef<HTMLDivElement>(null);
+  
   useEffect(() => {
+    const sectionElement = sectionRef.current;
 
-    if(!sectionRef) return;
+    if (!sectionElement) return;
+
     const handleScroll = () => {
-      const section = sectionRef.current;
-      if (section && section.scrollHeight - section.scrollTop === section.clientHeight) {
-        handleLoadMore()
+      const { scrollTop, clientHeight, scrollHeight } = sectionElement!;
+      if (scrollTop + clientHeight >= scrollHeight - 100) {
+        handleLoadMore();
       }
     };
 
-    const section = sectionRef.current;
-    if (section) {
-      section.addEventListener('scroll', handleScroll);
-    }
+    sectionRef.current.addEventListener('scroll', handleScroll);
 
     return () => {
-      if (section) {
-        section.removeEventListener('scroll', handleScroll);
-      }
+      sectionElement?.removeEventListener('scroll', handleScroll);
     };
-  }, [sectionRef, handleLoadMore]);
+  }, [handleLoadMore]);
 
-  return {
-    sectionRef,
-  };
+  return { sectionRef };
 }
