@@ -3,9 +3,7 @@ import { useEffect, useState } from "react";
 import {
   fetchTweetById,
   listenLatestTweets,
-
   loadMoreTweets,
-
 } from "../firebase/client";
 import { FilterState } from "@/app/search/page";
 
@@ -62,7 +60,8 @@ export default function useTimeline({
         return retweetData;
       });
 
-    return await Promise.all(retweetsPromise);
+    const results = await Promise.all(retweetsPromise);
+    return results.filter(Boolean);
   };
 
   const handleLoadMore = () => {

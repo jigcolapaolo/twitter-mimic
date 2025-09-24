@@ -337,6 +337,7 @@ export const likeTweet = async ({
 
 const mapTweetFromFirebaseToTweetObject = (doc: any) => {
   const data = doc.data();
+  if (!data) return null;
   // Se recupera el id generado por firestore
   const id = doc.id;
   const { createdAt } = data;
@@ -352,8 +353,10 @@ const mapTweetFromFirebaseToTweetObject = (doc: any) => {
 export const fetchTweetById = async (id: string) => {
   const userRef = doc(db, "tweets", id);
   const userSnap = await getDoc(userRef);
-  return mapTweetFromFirebaseToTweetObject(userSnap);
+  const tweet = mapTweetFromFirebaseToTweetObject(userSnap);
+  return tweet || null;
 };
+
 
 
 // Para actualizar en tiempo real con firebase
