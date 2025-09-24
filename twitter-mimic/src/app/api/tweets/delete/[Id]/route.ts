@@ -10,8 +10,8 @@ export async function DELETE (request: Request, { params }: { params: { Id: stri
         const relatedRetweets = await firestore.collection("tweets").where("sharedId", "==", Id).get();
         const relatedComments = await firestore.collection("comments").where("tweetId", "==", Id).get();
 
-        await Promise.all(relatedRetweets.docs.map((doc) => doc.ref.delete()));
-        await Promise.all(relatedComments.docs.map((doc) => doc.ref.delete()));
+        await Promise.all(relatedRetweets.docs.map((doc: any) => doc.ref.delete()));
+        await Promise.all(relatedComments.docs.map((doc: any) => doc.ref.delete()));
 
         await docRef.delete();
         
