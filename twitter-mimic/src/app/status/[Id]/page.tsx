@@ -1,7 +1,6 @@
 import { Button } from "@/ui/components/Button";
 import TweetClient from "@/ui/components/Tweet";
 import Link from "next/link";
-import { fetchLatestTweets } from "../../../../firebase/client";
 import { firestore } from "../../../../firebase/admin";
 import { Timeline } from "@/lib/definitions";
 import ArrowLeft from "@/ui/icons/ArrowLeft";
@@ -17,8 +16,8 @@ interface TweetPageProps {
 export const revalidate = 30;
 
 export async function generateStaticParams() {
-  const tweetIds = await fetchLatestTweets();
-  return tweetIds.map((tweet: Timeline) => ({ Id: tweet.id }));
+  const snapshot = await firestore.collection("tweets").get();
+  return snapshot.docs.map((doc) => ({ Id: doc.id }));
 }
 
 export default async function TweetPage({

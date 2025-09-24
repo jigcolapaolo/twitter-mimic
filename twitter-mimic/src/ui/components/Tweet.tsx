@@ -54,7 +54,6 @@ export default function TweetClient({
     setIsRetweetModified({ id, isRetweeted, sharedCount });
   }, [setIsRetweetModified]);
 
-
   return (
     <section ref={sectionRef} style={{ overflowY: "auto", width: "100%", height: "100%" }} data-testid="tweet-client">
       {loading && !timeline.length ? (
