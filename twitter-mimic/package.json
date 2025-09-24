@@ -13,6 +13,7 @@
     "test:coverage": "jest --coverage __tests__/unit __tests__/integration"
   },
   "dependencies": {
+    "axios": "^1.12.2",
     "firebase": "^10.13.1",
     "firebase-admin": "^12.5.0",
     "next": "^14.2.12",

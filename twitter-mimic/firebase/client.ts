@@ -1,5 +1,6 @@
 import { User } from "@/lib/definitions";
 import { TWEET_FILTER } from "@/ui/components/app/search/SearchFilters";
+import axios from "axios";
 import { initializeApp } from "firebase/app";
 import {
   getAuth,
@@ -27,7 +28,6 @@ import {
   updateDoc,
   where,
 } from "firebase/firestore";
-import { getStorage, ref, uploadBytesResumable } from "firebase/storage";
 
 const firebaseConfig = JSON.parse(
   process.env.NEXT_PUBLIC_FIREBASE_CONFIG || "{}"
@@ -548,9 +548,30 @@ const mapCommentFromFirebaseToCommentObject = (doc: any) => {
   };
 };
 
-// Firebase STORAGE
-export const uploadImage = (file: File) => {
-  const storageRef = getStorage(app);
-  const imageRef = ref(storageRef, `images/${file.name}`);
-  return uploadBytesResumable(imageRef, file);
-};
+// Cloudinary Upload
+export async function uploadImage(file: File, onProgress: (p: number) => void) {
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("upload_preset", process.env.NEXT_PUBLIC_CLOUDINARY_PRESET!);
+
+  const response = await axios.post(
+    `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
+    formData,
+    {
+      onUploadProgress: (progressEvent) => {
+        if (progressEvent.total) {
+          const percent = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+          onProgress(percent);
+        }
+      },
+    }
+  );
+
+  const optimizedUrl = response.data.secure_url.replace(
+    "/upload/",
+    "/upload/q_auto,f_auto/"
+  );
+
+  return optimizedUrl;
+}
+
