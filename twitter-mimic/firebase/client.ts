@@ -33,8 +33,6 @@ const firebaseConfig = JSON.parse(
   process.env.NEXT_PUBLIC_FIREBASE_CONFIG || "{}"
 );
 
-console.log(firebaseConfig);
-
 const app = initializeApp(firebaseConfig);
 
 const db = getFirestore(app);
