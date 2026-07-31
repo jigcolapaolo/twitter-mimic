@@ -7,6 +7,7 @@ import {
   signInWithPopup,
   GithubAuthProvider,
   GoogleAuthProvider,
+  signInWithRedirect,
 } from "firebase/auth";
 import {
   addDoc,
@@ -141,29 +142,17 @@ export const onAuthStateChanged = (onChange: any) => {
 
 export const loginWithGitHub = async (): Promise<void> => {
   const auth = getAuth(app);
-  // Crear provider con el que iniciar sesion
-  const githubProvider = new GithubAuthProvider();
+
+  const provider = new GithubAuthProvider();
 
   try {
-    /* Iniciar sesión con GitHub
-  
-    // const result = await signInWithPopup(auth, githubProvider);
+    await signInWithPopup(auth, provider);
+  } catch (error: any) {
+    if (error.code === "auth/popup-blocked") {
+      await signInWithRedirect(auth, provider);
+      return;
+    }
 
-    // const { _tokenResponse } = result as any;
-    // const { screenName, photoUrl, displayName } = _tokenResponse;
-
-    // return {
-    //   username: screenName,
-    //   avatar: photoUrl,
-    //   displayName,
-    // };
-
-    // Se inicia sesion, se obtiene el user y se mapean los datos a retornar */
-
-    // En el login se hace automaticamente un onAuthStateChanged (Ejecuta el useEffect)
-    await signInWithPopup(auth, githubProvider);
-  } catch (error) {
-    console.error(error);
     throw error;
   }
 };
@@ -171,13 +160,17 @@ export const loginWithGitHub = async (): Promise<void> => {
 export const loginWithGoogle = async (): Promise<void> => {
   const auth = getAuth(app);
 
-  const googleProvider = new GoogleAuthProvider();
-  googleProvider.addScope("email");
+  const provider = new GoogleAuthProvider();
+  provider.addScope("email");
 
   try {
-    await signInWithPopup(auth, googleProvider);
-  } catch (error) {
-    console.error(error);
+    await signInWithPopup(auth, provider);
+  } catch (error: any) {
+    if (error.code === "auth/popup-blocked") {
+      await signInWithRedirect(auth, provider);
+      return;
+    }
+
     throw error;
   }
 };
