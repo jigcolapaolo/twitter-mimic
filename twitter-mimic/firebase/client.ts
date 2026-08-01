@@ -142,17 +142,21 @@ export const onAuthStateChanged = (onChange: any) => {
 
 export const loginWithGitHub = async (): Promise<void> => {
   const auth = getAuth(app);
-
-  const provider = new GithubAuthProvider();
+  // Crear provider con el que iniciar sesion
+  const githubProvider = new GithubAuthProvider();
 
   try {
-    await signInWithPopup(auth, provider);
+    await signInWithPopup(auth, githubProvider);
   } catch (error: any) {
-    if (error.code === "auth/popup-blocked") {
-      await signInWithRedirect(auth, provider);
+    if (
+      error.code === "auth/popup-blocked" ||
+      error.code === "auth/cancelled-popup-request"
+    ) {
+      await signInWithRedirect(auth, githubProvider);
       return;
     }
 
+    console.error(error);
     throw error;
   }
 };
@@ -160,17 +164,21 @@ export const loginWithGitHub = async (): Promise<void> => {
 export const loginWithGoogle = async (): Promise<void> => {
   const auth = getAuth(app);
 
-  const provider = new GoogleAuthProvider();
-  provider.addScope("email");
+  const googleProvider = new GoogleAuthProvider();
+  googleProvider.addScope("email");
 
   try {
-    await signInWithPopup(auth, provider);
+    await signInWithPopup(auth, googleProvider);
   } catch (error: any) {
-    if (error.code === "auth/popup-blocked") {
-      await signInWithRedirect(auth, provider);
+    if (
+      error.code === "auth/popup-blocked" ||
+      error.code === "auth/cancelled-popup-request"
+    ) {
+      await signInWithRedirect(auth, googleProvider);
       return;
     }
 
+    console.error(error);
     throw error;
   }
 };
