@@ -1,7 +1,7 @@
 import { User } from "@/lib/definitions";
 import { TWEET_FILTER } from "@/ui/components/app/search/SearchFilters";
 import axios from "axios";
-import { initializeApp } from "firebase/app";
+import { getApps, initializeApp } from "firebase/app";
 import {
   getAuth,
   signInWithPopup,
@@ -34,7 +34,9 @@ const firebaseConfig = JSON.parse(
   process.env.NEXT_PUBLIC_FIREBASE_CONFIG || "{}"
 );
 
-const app = initializeApp(firebaseConfig);
+const app = getApps().length
+  ? getApps()[0]
+  : initializeApp(firebaseConfig);
 
 const db = getFirestore(app);
 
