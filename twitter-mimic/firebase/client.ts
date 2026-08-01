@@ -6,9 +6,7 @@ import {
   getAuth,
   signInWithPopup,
   GithubAuthProvider,
-  GoogleAuthProvider,
-  signInWithRedirect,
-  getRedirectResult,
+  GoogleAuthProvider
 } from "firebase/auth";
 import {
   addDoc,
@@ -30,6 +28,7 @@ import {
   updateDoc,
   where,
 } from "firebase/firestore";
+import { toast } from "sonner";
 
 const firebaseConfig = JSON.parse(
   process.env.NEXT_PUBLIC_FIREBASE_CONFIG || "{}"
@@ -143,21 +142,6 @@ export const onAuthStateChanged = (onChange: any) => {
   });
 };
 
-export const processRedirectResult = async () => {
-  const auth = getAuth(app);
-
-  try {
-    const result = await getRedirectResult(auth);
-
-    console.log("RESULT:", result);
-  } catch (error: any) {
-    console.error("REDIRECT ERROR");
-    console.error(error.code);
-    console.error(error.message);
-    console.error(error);
-  }
-};
-
 export const loginWithGitHub = async (): Promise<void> => {
   const auth = getAuth(app);
   // Crear provider con el que iniciar sesion
@@ -170,11 +154,20 @@ export const loginWithGitHub = async (): Promise<void> => {
       error.code === "auth/popup-blocked" ||
       error.code === "auth/cancelled-popup-request"
     ) {
-      await signInWithRedirect(auth, githubProvider);
+      toast.error("Login blocked", {
+        description:
+          "Your browser or an extension is blocking the sign-in window. Please disable your popup/ad blocker for this site and try again.",
+        duration: 7000,
+      });
       return;
     }
 
     console.error(error);
+
+    toast.error("Unable to sign in", {
+      description: "An unexpected error occurred. Please try again later.",
+    });
+
     throw error;
   }
 };
@@ -192,11 +185,20 @@ export const loginWithGoogle = async (): Promise<void> => {
       error.code === "auth/popup-blocked" ||
       error.code === "auth/cancelled-popup-request"
     ) {
-      await signInWithRedirect(auth, googleProvider);
+      toast.error("Login blocked", {
+        description:
+          "Your browser or an extension is blocking the sign-in window. Please disable your popup/ad blocker for this site and try again.",
+        duration: 7000,
+      });
       return;
     }
 
     console.error(error);
+
+    toast.error("Unable to sign in", {
+      description: "An unexpected error occurred. Please try again later.",
+    });
+
     throw error;
   }
 };
