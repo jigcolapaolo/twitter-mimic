@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "@/ui/styles/globals.css";
 import { lusitana } from "@/ui/fonts";
 import { Toaster } from "sonner";
+import AuthInitializer from "@/ui/components/AuthInitializer";
 
 export const metadata: Metadata = {
   title: "Twitter Mimic",
@@ -26,6 +27,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${lusitana.className} antialiased`}>
+        <AuthInitializer />
         <div className="divApp">
           <main className="mainApp">{children}</main>
         </div>

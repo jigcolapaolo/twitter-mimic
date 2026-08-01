@@ -8,6 +8,7 @@ import {
   GithubAuthProvider,
   GoogleAuthProvider,
   signInWithRedirect,
+  getRedirectResult,
 } from "firebase/auth";
 import {
   addDoc,
@@ -140,6 +141,21 @@ export const onAuthStateChanged = (onChange: any) => {
       onChange(null);
     }
   });
+};
+
+export const processRedirectResult = async () => {
+  const auth = getAuth(app);
+
+  try {
+    const result = await getRedirectResult(auth);
+
+    console.log("RESULT:", result);
+  } catch (error: any) {
+    console.error("REDIRECT ERROR");
+    console.error(error.code);
+    console.error(error.message);
+    console.error(error);
+  }
 };
 
 export const loginWithGitHub = async (): Promise<void> => {
